@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Breast Wellness — Self Check & Resources</title>
+<style>
+  :root{
+    --bg: #fbf7f3;
+    --card: #fffaf8;
+    --accent: #b0895b;
+    --muted: #6b6b6b;
+    --success: #2f6f4e;
+    --warn: #8a6d00;
+    --danger: #8b2b2b;
+    --radius: 14px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+    background: linear-gradient(180deg,var(--bg),#fff);
+    color:#222;
+    padding:24px;
+    display:flex;
+    justify-content:center;
+  }
+  .wrap{width:100%;max-width:960px;margin:32px;}
+  header{display:flex;gap:16px;align-items:center;margin-bottom:18px;}
+  .logo{width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,#fff,#fff5ee);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 6px 18px rgba(16,24,32,0.06);border:1px solid rgba(176,146,111,0.15);}
+  h1{font-size:20px;margin:0;color:var(--accent);font-weight:700}
+  p.lead{margin:0;color:var(--muted);font-size:14px}
+  .grid{display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:start}
+  @media (max-width:880px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border-radius:var(--radius);padding:18px;
+    box-shadow:0 8px 30px rgba(13,18,20,0.04);border:1px solid rgba(176,146,111,0.08);}
+  label{display:block;font-weight:600;margin:12px 0 6px;color:#2f2f2f;font-size:14px}
+  input[type="number"], select{
+    width:100%;padding:10px 12px;border-radius:10px;border:1px solid #f0e7e0;
+    background:white;font-size:14px;outline:none;transition:box-shadow .18s,border-color .18s;}
+  input:focus,select:focus{box-shadow:0 6px 20px rgba(176,146,111,0.08);border-color:var(--accent)}
+  .row{display:flex;gap:10px}
+  .row > *{flex:1}
+  button.primary{
+    margin-top:16px;width:100%;padding:12px;border-radius:10px;border:none;
+    background:var(--accent);color:white;font-weight:700;cursor:pointer;font-size:15px;}
+  .result{margin-top:14px;padding:12px;border-radius:10px;font-weight:600;}
+  .low{background:#e9f8f0;color:var(--success);border:1px solid rgba(47,111,78,0.09)}
+  .mid{background:#fff8e6;color:var(--warn);border:1px solid rgba(138,109,0,0.08)}
+  .high{background:#fdecea;color:var(--danger);border:1px solid rgba(139,43,43,0.08)}
+  .tools h3{margin:0 0 10px 0;color:#333}
+  .tool{padding:12px;border-radius:10px;background:white;margin-bottom:12px;border:1px solid rgba(12,12,12,0.03);}
+  .small{font-size:13px;color:var(--muted);margin-top:6px}
+  .steps{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+  .step{display:flex;gap:12px;align-items:flex-start;padding:10px;border-radius:10px;background:#fffaf7;border:1px solid rgba(176,146,111,0.04)}
+  .icon{width:56px;height:56px;flex:0 0 56px;border-radius:10px;background:linear-gradient(180deg,#fff,#fff7f4);display:flex;align-items:center;justify-content:center}
+  .step h4{margin:0;font-size:15px}
+  .step p{margin:6px 0 0 0;color:var(--muted);font-size:13px}
+  footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
+  .small-btn{display:inline-block;padding:8px 10px;border-radius:9px;background:#fff;border:1px solid rgba(12,12,12,0.04);cursor:pointer;font-weight:600;margin-right:8px}
+  .link{color:var(--accent);text-decoration:none;font-weight:600}
+  .saved-list{max-height:160px;overflow:auto;padding:8px;border-radius:8px;background:#fff;border:1px dashed rgba(0,0,0,0.03);margin-top:8px}
+  .entry{padding:8px;border-radius:8px;border-bottom:1px solid rgba(0,0,0,0.03);font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="logo">
+    <svg width="38" height="38" viewBox="0 0 24 24" fill="none">
+      <path d="M12 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="#f8d5cf"/>
+      <path d="M10 12c-3 0-6 2-6 5 0 1.66 1.34 3 3 3 3 0 5-3 5-6" fill="#ffdeda"/>
+      <path d="M14 12c3 0 6 2 6 5 0 1.66-1.34 3-3 3-3 0-5-3-5-6" fill="#ffe9d9"/>
+    </svg>
+  </div>
+  <div>
+    <h1>Breast Wellness — Self Check</h1>
+    <p class="lead">A friendly tool to help you stay aware. Not a diagnosis — just guidance for next steps.</p>
+  </div>
+</header>
+
+<div class="grid">
+  <main class="card">
+    <h2 style="margin-top:0;color:#2b2b2b">Quick Check</h2>
+    <p class="small">Answer a few simple questions — it only takes a minute.</p>
+
+    <label>Age</label>
+    <input id="age" type="number" min="18" placeholder="e.g. 34">
+
+    <div class="row" style="margin-top:8px">
+      <div>
+        <label>Lump or unusual firmness?</label>
+        <select id="lump"><option value="no">No</option><option value="yes">Yes</option></select>
+      </div>
+      <div>
+        <label>Pain or discomfort?</label>
+        <select id="pain"><option value="no">No</option><option value="yes">Yes</option></select>
+      </div>
+    </div>
+
+    <label>Skin or nipple changes?</label>
+    <select id="change"><option value="no">No</option><option value="yes">Yes</option></select>
+
+    <div class="row" style="margin-top:8px">
+      <div>
+        <label>Nipple discharge?</label>
+        <select id="discharge"><option value="no">No</option><option value="yes">Yes</option></select>
+      </div>
+      <div>
+        <label>Family history?</label>
+        <select id="family"><option value="no">No</option><option value="yes">Yes</option></select>
+      </div>
+    </div>
+
+    <label>Recent mammogram abnormalities?</label>
+    <select id="mammogram"><option value="no">No / Not sure</option><option value="yes">Yes</option></select>
+
+    <button class="primary" id="checkBtn">Check My Wellness</button>
+    <div id="result" class="result" style="display:none"></div>
+
+    <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="small-btn" id="saveLocalBtn">Save to this device</button>
+      <button class="small-btn" id="exportCSVBtn">Export all (CSV)</button>
+      <button class="small-btn" id="printTipsBtn">Download Tips (PDF)</button>
+      <button class="small-btn" id="calendarBtn">Set monthly reminder</button>
+      <button class="small-btn" id="notifyBtn">Enable browser reminder</button>
+      <button class="small-btn" id="clinicBtn">Find nearby clinics</button>
+    </div>
+    <div class="small" style="margin-top:10px">Your results stay private on this device unless exported.</div>
+    <div class="saved-list" id="savedList" style="display:none"></div>
+  </main>
+
+  <aside class="card tools">
+    <h3>Helpful Resources</h3>
+    <div class="tool"><strong>Friendly Tips</strong>
+      <p class="small">• Do monthly self-checks.<br>• Keep screening appointments.<br>• Talk to a clinician if unsure.</p>
+    </div>
+    <div class="tool">
+      <strong>What to Expect at Clinic</strong>
+      <p class="small">A gentle exam, possible imaging, and next steps.</p>
+    </div>
+  </aside>
+</div>
+
+<footer>Not a diagnosis — only a supportive screening tool. Consult a healthcare professional if concerned.</footer>
+</div>
+
+<script>
+function computeRisk(values){
+  let score = 0;
+  if(values.age && Number(values.age) >= 50) score += 2;
+  else if(values.age && Number(values.age) >= 40) score += 1;
+  ['lump','change','discharge','mammogram','family'].forEach(k=>{
+    if(values[k]==='yes') score += (k==='lump'||k==='mammogram'?3:1);
+  });
+  if(values.pain==='yes') score += 1;
+  let level,message;
+  if(score>=7){level='high';message='Some signs suggest that a clinical check would be wise. Consider booking a gentle evaluation soon.';}
+  else if(score>=3){level='mid';message='A few changes noted. A routine check or screening could provide reassurance.';}
+  else {level='low';message='No concerning signs detected. Continue monthly self-checks and routine screening.';}
+  return {level,message,score};
+}
+
+const checkBtn=document.getElementById('checkBtn');
+const resultDiv=document.getElementById('result');
+
+checkBtn.addEventListener('click',e=>{
+  e.preventDefault();
+  const values={
+    age:document.getElementById('age').value,
+    lump:document.getElementById('lump').value,
+    pain:document.getElementById('pain').value,
+    change:document.getElementById('change').value,
+    discharge:document.getElementById('discharge').value,
+    family:document.getElementById('family').value,
+    mammogram:document.getElementById('mammogram').value
+  };
+  const res=computeRisk(values);
+  resultDiv.style.display='block';
+  resultDiv.className='result '+res.level;
+  resultDiv.innerHTML=`<div>Result: <strong>${res.level==='low'?'Low concern':res.level==='mid'?'Moderate concern':'Higher concern'}</strong></div>
+  <div style="margin-top:6px;font-size:14px;color:#555">${res.message}</div>
+  <div class="small" style="margin-top:8px">Score: ${res.score}</div>`;
+
+  sendToAWS(values);
+  window.latestResult={ts:new Date().toISOString(),inputs:values,result:res};
+
+
+});
+
+document.getElementById('saveLocalBtn').addEventListener('click',()=>{
+  if(!window.latestResult){alert('Please check first.');return;}
+  const items=JSON.parse(localStorage.getItem('wellness_entries')||'[]');
+  items.push(window.latestResult);
+  localStorage.setItem('wellness_entries',JSON.stringify(items));
+  alert('Saved on this device.');
+});
+
+document.getElementById('exportCSVBtn').addEventListener('click',()=>{
+  const items=JSON.parse(localStorage.getItem('wellness_entries')||'[]');
+  if(!items.length){alert('No saved entries.');return;}
+  const header=['timestamp','age','lump','pain','change','discharge','family','mammogram','level','score'];
+  const rows=items.map(it=>[it.ts,it.inputs.age,it.inputs.lump,it.inputs.pain,it.inputs.change,it.inputs.discharge,it.inputs.family,it.inputs.mammogram,it.result.level,it.result.score]);
+  const csv=[header.join(','),...rows.map(r=>r.map(v=>`"${v}"`).join(','))].join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='breast_wellness.csv';
+  a.click();
+});
+
+document.getElementById('calendarBtn').addEventListener('click',()=>{
+  const now=new Date();
+  const link=`https://calendar.google.com/calendar/render?action=TEMPLATE&text=Monthly+Breast+Self-Check&details=Gentle+self+exam+reminder.&dates=${now.toISOString().slice(0,10).replace(/-/g,'')}/${now.toISOString().slice(0,10).replace(/-/g,'')}`;
+  window.open(link,'_blank');
+});
+
+document.getElementById('notifyBtn').addEventListener('click',()=>{
+  if(Notification.permission==='granted'){
+    new Notification('💗 Breast Wellness Reminder',{body:'Time for your monthly self-check!'});
+  } else {
+    Notification.requestPermission().then(p=>{
+      if(p==='granted') new Notification('💗 Breast Wellness Reminder',{body:'You’ll get gentle monthly reminders.'});
+      else alert('Notification permission denied.');
+    });
+  }
+});
+
+document.getElementById('clinicBtn').addEventListener('click',()=>{
+  window.open('https://www.google.com/maps/search/breast+clinic+near+me','_blank');
+});
+
+document.getElementById('printTipsBtn').addEventListener('click',()=>{
+  const tips=`Monthly Self-Check Tips:
+1️⃣ Look in the mirror for changes.
+2️⃣ Raise arms and check both sides.
+3️⃣ Feel gently for any unusual firmness.
+4️⃣ Report persistent changes to your doctor.`;
+  const blob=new Blob([tips],{type:'text/plain'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='self_check_tips.txt';
+  a.click();
+});
+
+// ✅ Connect form results to AWS API Gateway → Lambda → DynamoDB
+async function sendToAWS(values) {
+  try {
+    const response = await fetch("https://ipc7etrav2.execute-api.ap-south-1.amazonaws.com", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        age: values.age,
+        familyHistory: values.family === "yes" ? 1 : 0,
+        lump: values.lump === "yes" ? 1 : 0,
+        mammogram: values.mammogram === "yes" ? 1 : 0,
+        personalHistory: values.pain === "yes" ? 1 : 0
+      })
+    });
+
+    const result = await response.json();
+    console.log("✅ Saved to DynamoDB:", result);
+  } catch (err) {
+    console.error("❌ AWS Error:", err);
+  }
+}
+
+
+</script>
+</body>
+</html>
