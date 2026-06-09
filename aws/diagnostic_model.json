@@ -1,0 +1,346 @@
+{
+  "model_type": "diagnostic_logistic_regression",
+  "version": "1.0.0",
+  "dataset_sources": [
+    "Kaggle: uciml/breast-cancer-wisconsin-data",
+    "Kaggle: yasserh/breast-cancer-dataset",
+    "Fallback mirror: UCI WDBC public data file"
+  ],
+  "target": "diagnosis",
+  "target_mapping": {
+    "M": 1,
+    "B": 0
+  },
+  "features": [
+    "radius_mean",
+    "texture_mean",
+    "perimeter_mean",
+    "area_mean",
+    "smoothness_mean",
+    "compactness_mean",
+    "concavity_mean",
+    "concave_points_mean",
+    "symmetry_mean",
+    "fractal_dimension_mean",
+    "radius_se",
+    "texture_se",
+    "perimeter_se",
+    "area_se",
+    "smoothness_se",
+    "compactness_se",
+    "concavity_se",
+    "concave_points_se",
+    "symmetry_se",
+    "fractal_dimension_se",
+    "radius_worst",
+    "texture_worst",
+    "perimeter_worst",
+    "area_worst",
+    "smoothness_worst",
+    "compactness_worst",
+    "concavity_worst",
+    "concave_points_worst",
+    "symmetry_worst",
+    "fractal_dimension_worst"
+  ],
+  "means": [
+    14.258927631578947,
+    19.395131578947368,
+    92.87236842105264,
+    669.0508771929825,
+    0.09680348684210525,
+    0.10545644736842105,
+    0.09149962872807017,
+    0.050335024122807014,
+    0.1810423245614035,
+    0.06283087719298246,
+    0.412184649122807,
+    1.2211418859649121,
+    2.898580701754386,
+    41.63075877192983,
+    0.007071894736842105,
+    0.025411570175438596,
+    0.03178119210526316,
+    0.01171885745614035,
+    0.020465412280701756,
+    0.0038080153508771933,
+    16.433837719298246,
+    25.791732456140352,
+    108.39894736842105,
+    900.8642543859648,
+    0.13284388157894736,
+    0.25723809210526316,
+    0.27695166666666665,
+    0.116207,
+    0.28949122807017547,
+    0.08409116228070176
+  ],
+  "stds": [
+    3.640292046739147,
+    4.293498908515503,
+    25.119876628811735,
+    368.8799881494322,
+    0.014210484080356744,
+    0.05417029636242397,
+    0.08250708974472662,
+    0.04054418500696252,
+    0.0276909373489429,
+    0.007124199593257306,
+    0.2885208920669133,
+    0.5482241528174475,
+    2.0754798541701565,
+    48.30217745113316,
+    0.003054118474386076,
+    0.017622235346174235,
+    0.028851505313698712,
+    0.00598067882774574,
+    0.00824723227583676,
+    0.0027476175664758106,
+    4.979759551281292,
+    6.06299892708417,
+    34.625922183385406,
+    591.2905494187271,
+    0.023170026928597674,
+    0.16171821830340685,
+    0.21018430898289472,
+    0.06765019794579513,
+    0.06305512982095475,
+    0.018528311438055944
+  ],
+  "weights": [
+    0.46261957898389766,
+    0.47820396494396417,
+    0.44791052432099443,
+    0.5150256012762249,
+    0.22251305071200358,
+    -0.48258571816407936,
+    0.7161037293547547,
+    0.8621067783569608,
+    -0.05844586636729914,
+    -0.4065371805572307,
+    1.2580081158434508,
+    -0.19578744983217342,
+    0.8008027713487273,
+    0.8862199213445531,
+    0.1484683510407533,
+    -0.8592525834552149,
+    0.05999343909705904,
+    0.4542788745725079,
+    -0.2658389948708181,
+    -0.6029603739608586,
+    0.9569644231166028,
+    1.2813331126775414,
+    0.8128227225340884,
+    0.9008454746578113,
+    0.694037981517781,
+    -0.004421683567759477,
+    0.7913407230785834,
+    0.9740157090564574,
+    0.9175730844174089,
+    0.5318497033074532
+  ],
+  "bias": 0.06575947733645826,
+  "thresholds": {
+    "benign": 0.5
+  },
+  "metrics": {
+    "test_records": 113,
+    "accuracy": 0.9912,
+    "precision": 0.9744,
+    "recall": 1.0,
+    "f1": 0.987,
+    "log_loss": 0.0374,
+    "confusion_matrix": {
+      "tp": 38,
+      "tn": 74,
+      "fp": 1,
+      "fn": 0
+    }
+  },
+  "feature_importance": [
+    {
+      "feature": "texture_worst",
+      "weight": 1.281333,
+      "absolute_weight": 1.281333,
+      "direction": "raises malignant probability"
+    },
+    {
+      "feature": "radius_se",
+      "weight": 1.258008,
+      "absolute_weight": 1.258008,
+      "direction": "raises malignant probability"
+    },
+    {
+      "feature": "concave_points_worst",
+      "weight": 0.974016,
+      "absolute_weight": 0.974016,
+      "direction": "raises malignant probability"
+    },
+    {
+      "feature": "radius_worst",
+      "weight": 0.956964,
+      "absolute_weight": 0.956964,
+      "direction": "raises malignant probability"
+    },
+    {
+      "feature": "symmetry_worst",
+      "weight": 0.917573,
+      "absolute_weight": 0.917573,
+      "direction": "raises malignant probability"
+    },
+    {
+      "feature": "area_worst",
+      "weight": 0.900845,
+      "absolute_weight": 0.900845,
+      "direction": "raises malignant probability"
+    },
+    {
+      "feature": "area_se",
+      "weight": 0.88622,
+      "absolute_weight": 0.88622,
+      "direction": "raises malignant probability"
+    },
+    {
+      "feature": "concave_points_mean",
+      "weight": 0.862107,
+      "absolute_weight": 0.862107,
+      "direction": "raises malignant probability"
+    },
+    {
+      "feature": "compactness_se",
+      "weight": -0.859253,
+      "absolute_weight": 0.859253,
+      "direction": "lowers malignant probability"
+    },
+    {
+      "feature": "perimeter_worst",
+      "weight": 0.812823,
+      "absolute_weight": 0.812823,
+      "direction": "raises malignant probability"
+    },
+    {
+      "feature": "perimeter_se",
+      "weight": 0.800803,
+      "absolute_weight": 0.800803,
+      "direction": "raises malignant probability"
+    },
+    {
+      "feature": "concavity_worst",
+      "weight": 0.791341,
+      "absolute_weight": 0.791341,
+      "direction": "raises malignant probability"
+    },
+    {
+      "feature": "concavity_mean",
+      "weight": 0.716104,
+      "absolute_weight": 0.716104,
+      "direction": "raises malignant probability"
+    },
+    {
+      "feature": "smoothness_worst",
+      "weight": 0.694038,
+      "absolute_weight": 0.694038,
+      "direction": "raises malignant probability"
+    },
+    {
+      "feature": "fractal_dimension_se",
+      "weight": -0.60296,
+      "absolute_weight": 0.60296,
+      "direction": "lowers malignant probability"
+    },
+    {
+      "feature": "fractal_dimension_worst",
+      "weight": 0.53185,
+      "absolute_weight": 0.53185,
+      "direction": "raises malignant probability"
+    },
+    {
+      "feature": "area_mean",
+      "weight": 0.515026,
+      "absolute_weight": 0.515026,
+      "direction": "raises malignant probability"
+    },
+    {
+      "feature": "compactness_mean",
+      "weight": -0.482586,
+      "absolute_weight": 0.482586,
+      "direction": "lowers malignant probability"
+    },
+    {
+      "feature": "texture_mean",
+      "weight": 0.478204,
+      "absolute_weight": 0.478204,
+      "direction": "raises malignant probability"
+    },
+    {
+      "feature": "radius_mean",
+      "weight": 0.46262,
+      "absolute_weight": 0.46262,
+      "direction": "raises malignant probability"
+    },
+    {
+      "feature": "concave_points_se",
+      "weight": 0.454279,
+      "absolute_weight": 0.454279,
+      "direction": "raises malignant probability"
+    },
+    {
+      "feature": "perimeter_mean",
+      "weight": 0.447911,
+      "absolute_weight": 0.447911,
+      "direction": "raises malignant probability"
+    },
+    {
+      "feature": "fractal_dimension_mean",
+      "weight": -0.406537,
+      "absolute_weight": 0.406537,
+      "direction": "lowers malignant probability"
+    },
+    {
+      "feature": "symmetry_se",
+      "weight": -0.265839,
+      "absolute_weight": 0.265839,
+      "direction": "lowers malignant probability"
+    },
+    {
+      "feature": "smoothness_mean",
+      "weight": 0.222513,
+      "absolute_weight": 0.222513,
+      "direction": "raises malignant probability"
+    },
+    {
+      "feature": "texture_se",
+      "weight": -0.195787,
+      "absolute_weight": 0.195787,
+      "direction": "lowers malignant probability"
+    },
+    {
+      "feature": "smoothness_se",
+      "weight": 0.148468,
+      "absolute_weight": 0.148468,
+      "direction": "raises malignant probability"
+    },
+    {
+      "feature": "concavity_se",
+      "weight": 0.059993,
+      "absolute_weight": 0.059993,
+      "direction": "raises malignant probability"
+    },
+    {
+      "feature": "symmetry_mean",
+      "weight": -0.058446,
+      "absolute_weight": 0.058446,
+      "direction": "lowers malignant probability"
+    },
+    {
+      "feature": "compactness_worst",
+      "weight": -0.004422,
+      "absolute_weight": 0.004422,
+      "direction": "lowers malignant probability"
+    }
+  ],
+  "notes": [
+    "Diagnostic model uses Wisconsin Diagnostic Breast Cancer cell-nuclei features.",
+    "It is an educational model and is not clinically validated for diagnosis."
+  ]
+}

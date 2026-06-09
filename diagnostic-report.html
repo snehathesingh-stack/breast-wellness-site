@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Breast Wellness - Diagnostic Model Report</title>
+<style>
+  :root {
+    --bg: #f8f6f2;
+    --surface: #fffdfb;
+    --ink: #202124;
+    --muted: #62646a;
+    --line: #e7ddd5;
+    --accent: #7c3f4b;
+    --radius: 8px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif; background: var(--bg); color: var(--ink); }
+  .page { width: min(1080px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 40px; }
+  header { border-bottom: 1px solid var(--line); margin-bottom: 22px; padding-bottom: 18px; }
+  h1 { margin: 0 0 8px; color: var(--accent); font-size: clamp(28px, 4vw, 44px); letter-spacing: 0; }
+  h2 { margin: 0 0 12px; font-size: 22px; }
+  p { line-height: 1.55; }
+  .lead, .small { color: var(--muted); }
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
+  .wide { grid-column: 1 / -1; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { border-bottom: 1px solid var(--line); padding: 10px 8px; text-align: left; }
+  th { color: var(--accent); }
+  .metric-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .metric { border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; background: #fff; }
+  .metric strong { display: block; color: var(--accent); font-size: 24px; }
+  .link { color: var(--accent); font-weight: 800; text-decoration: none; }
+  @media (max-width: 760px) { .grid, .metric-row { grid-template-columns: 1fr; } .wide { grid-column: auto; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <h1>Diagnostic Model Report</h1>
+    <p class="lead">High-accuracy Wisconsin Diagnostic Breast Cancer model using cell-nuclei measurements.</p>
+    <p><a class="link" href="index.html">Back to self check</a> | <a class="link" href="model-report.html">Wellness model report</a></p>
+  </header>
+
+  <main class="grid">
+    <section class="panel wide">
+      <h2>Diagnostic Model Metrics</h2>
+      <div class="metric-row" id="metrics"></div>
+      <p class="small">This benchmark model uses biopsy image-derived measurements. It is educational and not a clinical diagnostic service.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Confusion Matrix</h2>
+      <table><tbody id="confusion"></tbody></table>
+    </section>
+
+    <section class="panel">
+      <h2>Dataset Sources</h2>
+      <ul id="sources"></ul>
+    </section>
+
+    <section class="panel wide">
+      <h2>Top Diagnostic Feature Weights</h2>
+      <table>
+        <thead><tr><th>Feature</th><th>Weight</th><th>Direction</th></tr></thead>
+        <tbody id="features"></tbody>
+      </table>
+    </section>
+
+    <section class="panel wide">
+      <h2>Limitations</h2>
+      <ul id="limitations"></ul>
+    </section>
+  </main>
+</div>
+
+<script>
+async function loadReport() {
+  const response = await fetch("ml/diagnostic_model_report.json");
+  if (!response.ok) throw new Error("Diagnostic report unavailable");
+  return response.json();
+}
+
+function renderReport(report) {
+  const metrics = report.metrics;
+  const confusion = metrics.confusion_matrix;
+  document.getElementById("metrics").innerHTML = [
+    ["Accuracy", metrics.accuracy],
+    ["Precision", metrics.precision],
+    ["Recall", metrics.recall],
+    ["F1", metrics.f1]
+  ].map(([label, value]) => `<div class="metric"><span>${label}</span><strong>${value}</strong></div>`).join("");
+
+  document.getElementById("confusion").innerHTML = `
+    <tr><th></th><th>Predicted Malignant</th><th>Predicted Benign</th></tr>
+    <tr><th>Actual Malignant</th><td>${confusion.tp}</td><td>${confusion.fn}</td></tr>
+    <tr><th>Actual Benign</th><td>${confusion.fp}</td><td>${confusion.tn}</td></tr>
+  `;
+
+  document.getElementById("sources").innerHTML = report.dataset.sources.map((source) => `<li>${source}</li>`).join("");
+  document.getElementById("features").innerHTML = report.feature_importance.slice(0, 12).map((row) => `
+    <tr>
+      <td>${row.feature.replaceAll("_", " ")}</td>
+      <td>${row.weight}</td>
+      <td>${row.direction}</td>
+    </tr>
+  `).join("");
+  document.getElementById("limitations").innerHTML = report.limitations.map((item) => `<li>${item}</li>`).join("");
+}
+
+loadReport().then(renderReport).catch(() => {
+  document.querySelector("main").innerHTML = `<section class="panel wide"><h2>Report unavailable</h2><p class="small">Check that ml/diagnostic_model_report.json is deployed.</p></section>`;
+});
+</script>
+</body>
+</html>

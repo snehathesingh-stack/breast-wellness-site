@@ -20,15 +20,15 @@ jobs:
 
       - name: Python syntax check
         run: |
-          python -B -c "import ast, pathlib; [ast.parse(path.read_text(encoding='utf-8')) for path in pathlib.Path('.').glob('api/*.py')]; ast.parse(pathlib.Path('ml/train_model.py').read_text(encoding='utf-8')); print('python syntax ok')"
+          python -B -c "import ast, pathlib; [ast.parse(path.read_text(encoding='utf-8')) for path in pathlib.Path('.').glob('api/*.py')]; [ast.parse(path.read_text(encoding='utf-8')) for path in pathlib.Path('ml').glob('train*.py')]; print('python syntax ok')"
 
       - name: Validate JSON artifacts
         run: |
-          python -B -c "import json, pathlib; [json.loads(path.read_text(encoding='utf-8')) for path in [pathlib.Path('aws/model.json'), pathlib.Path('ml/model_report.json'), pathlib.Path('vercel.json')]]; print('json ok')"
+          python -B -c "import json, pathlib; [json.loads(path.read_text(encoding='utf-8')) for path in [pathlib.Path('aws/model.json'), pathlib.Path('aws/diagnostic_model.json'), pathlib.Path('ml/model_report.json'), pathlib.Path('ml/diagnostic_model_report.json'), pathlib.Path('vercel.json')]]; print('json ok')"
 
       - name: Frontend script syntax check
         run: |
-          node -e "const fs=require('fs'); for (const file of ['index.html','breast-cancer-prediction.html','model-report.html']) { const html=fs.readFileSync(file,'utf8'); const scripts=[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m=>m[1]).join('\n'); new Function(scripts); } console.log('frontend script syntax ok');"
+          node -e "const fs=require('fs'); for (const file of ['index.html','breast-cancer-prediction.html','model-report.html','diagnostic-report.html']) { const html=fs.readFileSync(file,'utf8'); const scripts=[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m=>m[1]).join('\n'); new Function(scripts); } console.log('frontend script syntax ok');"
 
       - name: Run tests
         run: python tests/run_tests.py

@@ -19,9 +19,13 @@ def test_model_report_loads_report_json():
     assert "Confusion Matrix" in html
     assert "Top Feature Weights" in html
 
+    diagnostic_html = (ROOT / "diagnostic-report.html").read_text(encoding="utf-8")
+    assert 'fetch("ml/diagnostic_model_report.json")' in diagnostic_html
+    assert "Diagnostic Model Metrics" in diagnostic_html
+
 
 def test_html_script_blocks_are_present():
-    for filename in ["index.html", "breast-cancer-prediction.html", "model-report.html"]:
+    for filename in ["index.html", "breast-cancer-prediction.html", "model-report.html", "diagnostic-report.html"]:
         html = (ROOT / filename).read_text(encoding="utf-8")
         scripts = re.findall(r"<script>([\s\S]*?)</script>", html)
         assert scripts, f"{filename} should include a script block"

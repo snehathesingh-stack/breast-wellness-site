@@ -30,6 +30,7 @@ This application is for awareness and education only. It does not diagnose breas
 - Monthly Google Calendar reminder
 - Clinic search shortcut
 - Model report page with metrics, confusion matrix, comparison, and limitations
+- High-accuracy Wisconsin Diagnostic Breast Cancer model track
 - AWS Lambda starter backend with optional DynamoDB persistence
 - Reproducible ML training script
 - Exported Lambda-ready model artifact
@@ -42,18 +43,25 @@ This application is for awareness and education only. It does not diagnose breas
 ├── breast-cancer-prediction.html   # Static frontend for S3 hosting
 ├── index.html                      # S3 website root page
 ├── model-report.html               # ML model report page
+├── diagnostic-report.html          # Diagnostic model report page
 ├── vercel.json                     # Vercel static hosting config
 ├── Dataset_file.xlsx               # Curated project dataset
 ├── DEPLOYMENT.md                   # S3 403 fix and deployment guide
 ├── README.md                       # Project documentation
 ├── api/
 │   ├── predict.py                  # Vercel Python ML inference endpoint
+│   ├── diagnostic.py               # Vercel WDBC diagnostic model endpoint
 │   └── health.py                   # Vercel model health endpoint
 ├── .github/workflows/
 │   ├── validate.yml                # CI validation checks
 │   └── deploy-s3.yml               # Optional GitHub Actions S3 deployment
 ├── ml/
-│   └── train_model.py              # Reproducible Logistic Regression training
+│   ├── train_model.py              # Reproducible wellness model training
+│   ├── train_diagnostic_model.py   # Reproducible WDBC diagnostic model training
+│   ├── model_report.json
+│   └── diagnostic_model_report.json
+├── data/
+│   └── wdbc.csv                    # Wisconsin Diagnostic Breast Cancer data
 ├── tests/
 │   ├── run_tests.py                # Dependency-free test runner
 │   ├── test_api.py
@@ -86,6 +94,13 @@ The included spreadsheet is a curated breast cancer awareness dataset:
   - `Cholesterol`
   - `Detected_cancer`
 
+The diagnostic model uses the Wisconsin Diagnostic Breast Cancer dataset requested from Kaggle:
+
+- https://www.kaggle.com/datasets/uciml/breast-cancer-wisconsin-data
+- https://www.kaggle.com/datasets/yasserh/breast-cancer-dataset
+
+Because Kaggle downloads require authentication, the training script also supports the public UCI WDBC data file as a fallback mirror for the same benchmark-style diagnostic data.
+
 ## Machine Learning
 
 The project now includes a reproducible pure-Python ML pipeline:
@@ -115,6 +130,27 @@ Current generated model metrics:
 | Log loss | 0.6735 |
 
 These metrics improve on the earlier Logistic Regression baseline, but the model is still included to demonstrate an end-to-end ML workflow, not to provide clinical-grade prediction.
+
+## Diagnostic Model
+
+The diagnostic model uses 30 Wisconsin Diagnostic Breast Cancer numeric cell-nuclei features. It is trained separately from the wellness questionnaire model:
+
+```text
+python ml/train_diagnostic_model.py
+```
+
+Current diagnostic model metrics:
+
+| Metric | Value |
+| --- | ---: |
+| Test records | 113 |
+| Accuracy | 0.9912 |
+| Precision | 0.9744 |
+| Recall | 1.0 |
+| F1 | 0.987 |
+| Log loss | 0.0374 |
+
+This higher accuracy is possible because the diagnostic dataset contains biopsy image-derived numeric features, not broad self-check questionnaire fields.
 
 ## Vercel Deployment
 
@@ -152,6 +188,13 @@ The model report page is available at:
 
 ```text
 /model-report.html
+```
+
+The diagnostic model API and report are available at:
+
+```text
+/api/diagnostic
+/diagnostic-report.html
 ```
 
 The frontend uses a relative API URL:

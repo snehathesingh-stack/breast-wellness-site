@@ -64,11 +64,14 @@ def test_predict_rejects_invalid_age():
 
 def test_health_model_summary_loads():
     health = load_module("api/health.py", "health")
-    model = health.load_model()
+    model = health.load_model("model.json")
+    diagnostic_model = health.load_model("diagnostic_model.json")
 
     assert model["model_type"] == "k_nearest_neighbors"
     assert model["metrics"]["test_records"] == 200
     assert model["metrics"]["accuracy"] >= 0.6
+    assert diagnostic_model["model_type"] == "diagnostic_logistic_regression"
+    assert diagnostic_model["metrics"]["accuracy"] >= 0.95
 
 
 def test_model_artifacts_are_valid():
@@ -79,3 +82,16 @@ def test_model_artifacts_are_valid():
     assert model["feature_importance"]
     assert report["model_comparison"]
     assert report["feature_importance"]
+
+
+def test_diagnostic_model_predicts_with_wdbc_features():
+    diagnostic = load_module("api/diagnostic.py", "diagnostic")
+    model = diagnostic.load_model()
+    sample = {feature: mean for feature, mean in zip(model["features"], model["means"])}
+    features = diagnostic.normalize_payload({"features": sample})
+    prediction = diagnostic.predict(features)
+
+    assert prediction["source"] == "wdbc_diagnostic_model"
+    assert prediction["label"] in {"benign", "malignant"}
+    assert 0 <= prediction["malignant_probability"] <= 1
+    assert len(prediction["top_factors"]) == 8

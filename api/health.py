@@ -5,16 +5,23 @@ from pathlib import Path
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
-        model = load_model()
+        wellness_model = load_model("model.json")
+        diagnostic_model = load_model("diagnostic_model.json")
         payload = {
             "status": "ok",
             "service": "breast-wellness-ml",
             "platform": "vercel",
             "model": {
                 "available": True,
-                "type": model.get("model_type"),
-                "version": model.get("version"),
-                "metrics": model.get("metrics"),
+                "type": wellness_model.get("model_type"),
+                "version": wellness_model.get("version"),
+                "metrics": wellness_model.get("metrics"),
+            },
+            "diagnostic_model": {
+                "available": True,
+                "type": diagnostic_model.get("model_type"),
+                "version": diagnostic_model.get("version"),
+                "metrics": diagnostic_model.get("metrics"),
             },
         }
         self.send_response(200)
@@ -24,6 +31,6 @@ class handler(BaseHTTPRequestHandler):
         self.wfile.write(json.dumps(payload).encode("utf-8"))
 
 
-def load_model():
-    path = Path(__file__).resolve().parents[1] / "aws" / "model.json"
+def load_model(filename):
+    path = Path(__file__).resolve().parents[1] / "aws" / filename
     return json.loads(path.read_text(encoding="utf-8"))
