@@ -10,6 +10,7 @@ from xml.etree import ElementTree
 ROOT = Path(__file__).resolve().parents[1]
 DATASET_PATH = ROOT / "Dataset_file.xlsx"
 MODEL_PATH = ROOT / "aws" / "model.json"
+REPORT_PATH = ROOT / "ml" / "model_report.json"
 
 FEATURES = [
     "Lump_present",
@@ -40,6 +41,8 @@ def main():
     train, test = split_dataset(dataset, test_ratio=0.2, seed=42)
     model = train_logistic_regression(train)
     metrics = evaluate(model, test)
+    baseline_metrics = evaluate_baseline(test)
+    feature_importance = explain_logistic_model(model)
 
     artifact = {
         "model_type": "logistic_regression",
@@ -56,15 +59,47 @@ def main():
             "moderate": 0.65,
         },
         "metrics": metrics,
+        "feature_importance": feature_importance,
+        "comparison": [
+            {
+                "model": "Logistic Regression",
+                "role": "Deployed ML model",
+                **metrics,
+            },
+            {
+                "model": "Majority Class Baseline",
+                "role": "Sanity-check baseline",
+                **baseline_metrics,
+            },
+        ],
         "notes": [
             "This model is for educational project use only.",
             "It is not validated for clinical diagnosis or medical decision-making.",
         ],
     }
 
+    report = {
+        "dataset": {
+            "file": DATASET_PATH.name,
+            "records": len(dataset),
+            "features": FEATURES,
+            "target": TARGET,
+        },
+        "deployed_model": "Logistic Regression",
+        "model_comparison": artifact["comparison"],
+        "feature_importance": feature_importance,
+        "limitations": [
+            "The dataset is curated for project demonstration.",
+            "The model is not clinically validated.",
+            "Metrics show limited predictive signal and should be presented honestly.",
+        ],
+    }
+
     MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
     MODEL_PATH.write_text(json.dumps(artifact, indent=2), encoding="utf-8")
+    REPORT_PATH.write_text(json.dumps(report, indent=2), encoding="utf-8")
     print(f"Wrote {MODEL_PATH}")
+    print(f"Wrote {REPORT_PATH}")
     print(json.dumps(metrics, indent=2))
 
 
@@ -222,6 +257,53 @@ def evaluate(model, test):
         "log_loss": round(statistics.fmean(losses), 4),
         "confusion_matrix": confusion,
     }
+
+
+def evaluate_baseline(test):
+    positives = sum(target for _, target in test)
+    negatives = len(test) - positives
+    majority_label = 1 if positives >= negatives else 0
+    confusion = {"tp": 0, "tn": 0, "fp": 0, "fn": 0}
+
+    for _, target in test:
+        label = majority_label
+        if label == 1 and target == 1:
+            confusion["tp"] += 1
+        elif label == 0 and target == 0:
+            confusion["tn"] += 1
+        elif label == 1 and target == 0:
+            confusion["fp"] += 1
+        else:
+            confusion["fn"] += 1
+
+    total = sum(confusion.values())
+    accuracy = (confusion["tp"] + confusion["tn"]) / total
+    precision = safe_div(confusion["tp"], confusion["tp"] + confusion["fp"])
+    recall = safe_div(confusion["tp"], confusion["tp"] + confusion["fn"])
+    f1 = safe_div(2 * precision * recall, precision + recall)
+    return {
+        "test_records": total,
+        "accuracy": round(accuracy, 4),
+        "precision": round(precision, 4),
+        "recall": round(recall, 4),
+        "f1": round(f1, 4),
+        "log_loss": None,
+        "confusion_matrix": confusion,
+    }
+
+
+def explain_logistic_model(model):
+    rows = []
+    for name, weight in zip(FEATURES, model["weights"]):
+        rows.append(
+            {
+                "feature": name,
+                "weight": round(weight, 6),
+                "absolute_weight": round(abs(weight), 6),
+                "direction": "raises model probability" if weight > 0 else "lowers model probability",
+            }
+        )
+    return sorted(rows, key=lambda row: row["absolute_weight"], reverse=True)
 
 
 def predict_probability(model, features):
