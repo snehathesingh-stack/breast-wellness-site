@@ -112,12 +112,8 @@ def load_model():
 def predict_with_model(values):
     model = load_model()
     features, display_features = feature_vector(values, model)
-    standardized = [
-        (value - model["means"][index]) / model["stds"][index]
-        for index, value in enumerate(features)
-    ]
-    raw_score = sum(weight * value for weight, value in zip(model["weights"], standardized)) + model["bias"]
-    probability = sigmoid(raw_score)
+    standardized = standardize(features, model)
+    probability = predict_probability(model, standardized)
     thresholds = model.get("thresholds", {"low": 0.35, "moderate": 0.65})
 
     if probability >= thresholds["moderate"]:
@@ -139,6 +135,33 @@ def predict_with_model(values):
         "top_factors": top_factors(model, standardized, display_features),
         "thresholds": thresholds,
     }
+
+
+def standardize(features, model):
+    return [
+        (value - model["means"][index]) / model["stds"][index]
+        for index, value in enumerate(features)
+    ]
+
+
+def predict_probability(model, standardized):
+    if model.get("model_type") == "k_nearest_neighbors":
+        distances = sorted(
+            (
+                (squared_distance(standardized, train_vector), label)
+                for train_vector, label in zip(model["train_vectors"], model["train_labels"])
+            ),
+            key=lambda item: item[0],
+        )
+        nearest = distances[: model["k"]]
+        return sum(label for _, label in nearest) / len(nearest)
+
+    raw_score = sum(weight * value for weight, value in zip(model["weights"], standardized)) + model["bias"]
+    return sigmoid(raw_score)
+
+
+def squared_distance(left, right):
+    return sum((a - b) ** 2 for a, b in zip(left, right))
 
 
 def feature_vector(values, model):
@@ -173,9 +196,13 @@ def feature_vector(values, model):
 
 
 def top_factors(model, standardized, display_features):
+    weights = model.get("weights") or model.get("explanation_model", {}).get("weights")
+    if not weights:
+        return []
+
     factors = []
     for index, feature in enumerate(model["features"]):
-        contribution = model["weights"][index] * standardized[index]
+        contribution = weights[index] * standardized[index]
         factors.append(
             {
                 "feature": feature,

@@ -66,8 +66,9 @@ def test_health_model_summary_loads():
     health = load_module("api/health.py", "health")
     model = health.load_model()
 
-    assert model["model_type"] == "logistic_regression"
+    assert model["model_type"] == "k_nearest_neighbors"
     assert model["metrics"]["test_records"] == 200
+    assert model["metrics"]["accuracy"] >= 0.6
 
 
 def test_model_artifacts_are_valid():

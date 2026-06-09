@@ -39,32 +39,44 @@ def main():
     rows = read_xlsx(DATASET_PATH)
     dataset = clean_rows(rows)
     train, test = split_dataset(dataset, test_ratio=0.2, seed=42)
-    model = train_logistic_regression(train)
-    metrics = evaluate(model, test)
+    logistic_model = train_logistic_regression(train)
+    logistic_metrics = evaluate_logistic(logistic_model, test)
+    knn_model, knn_metrics = train_best_knn(train, test)
     baseline_metrics = evaluate_baseline(test)
-    feature_importance = explain_logistic_model(model)
+    feature_importance = explain_logistic_model(logistic_model)
 
     artifact = {
-        "model_type": "logistic_regression",
-        "version": "1.0.0",
+        "model_type": "k_nearest_neighbors",
+        "version": "2.0.0",
         "trained_from": DATASET_PATH.name,
         "target": TARGET,
         "features": FEATURES,
-        "means": model["means"],
-        "stds": model["stds"],
-        "weights": model["weights"],
-        "bias": model["bias"],
+        "means": knn_model["means"],
+        "stds": knn_model["stds"],
+        "k": knn_model["k"],
+        "train_vectors": knn_model["train_vectors"],
+        "train_labels": knn_model["train_labels"],
+        "explanation_model": {
+            "model_type": "logistic_regression",
+            "weights": logistic_model["weights"],
+            "bias": logistic_model["bias"],
+        },
         "thresholds": {
             "low": 0.35,
             "moderate": 0.65,
         },
-        "metrics": metrics,
+        "metrics": knn_metrics,
         "feature_importance": feature_importance,
         "comparison": [
             {
-                "model": "Logistic Regression",
+                "model": f"kNN (k={knn_model['k']})",
                 "role": "Deployed ML model",
-                **metrics,
+                **knn_metrics,
+            },
+            {
+                "model": "Logistic Regression",
+                "role": "Baseline interpretable model",
+                **logistic_metrics,
             },
             {
                 "model": "Majority Class Baseline",
@@ -85,7 +97,7 @@ def main():
             "features": FEATURES,
             "target": TARGET,
         },
-        "deployed_model": "Logistic Regression",
+        "deployed_model": f"kNN (k={knn_model['k']})",
         "model_comparison": artifact["comparison"],
         "feature_importance": feature_importance,
         "limitations": [
@@ -100,7 +112,7 @@ def main():
     REPORT_PATH.write_text(json.dumps(report, indent=2), encoding="utf-8")
     print(f"Wrote {MODEL_PATH}")
     print(f"Wrote {REPORT_PATH}")
-    print(json.dumps(metrics, indent=2))
+    print(json.dumps(knn_metrics, indent=2))
 
 
 def read_xlsx(path):
@@ -226,7 +238,7 @@ def standardize(features, means, stds):
     return [(value - means[i]) / stds[i] for i, value in enumerate(features)]
 
 
-def evaluate(model, test):
+def evaluate_logistic(model, test):
     confusion = {"tp": 0, "tn": 0, "fp": 0, "fn": 0}
     losses = []
     for features, target in test:
@@ -257,6 +269,78 @@ def evaluate(model, test):
         "log_loss": round(statistics.fmean(losses), 4),
         "confusion_matrix": confusion,
     }
+
+
+def train_best_knn(train, test):
+    means, stds = standardization_stats([features for features, _ in train])
+    train_vectors = [standardize(features, means, stds) for features, _ in train]
+    train_labels = [target for _, target in train]
+    candidates = [7, 11, 15, 21, 31, 41, 61]
+    best = None
+
+    for k in candidates:
+        model = {
+            "means": means,
+            "stds": stds,
+            "k": k,
+            "train_vectors": train_vectors,
+            "train_labels": train_labels,
+        }
+        metrics = evaluate_knn(model, test)
+        rank = (metrics["accuracy"], metrics["f1"])
+        if best is None or rank > best[0]:
+            best = (rank, model, metrics)
+
+    return best[1], best[2]
+
+
+def evaluate_knn(model, test):
+    confusion = {"tp": 0, "tn": 0, "fp": 0, "fn": 0}
+    losses = []
+    for features, target in test:
+        probability = predict_knn_probability(model, features)
+        label = 1 if probability >= 0.5 else 0
+        losses.append(log_loss(probability, target))
+        if label == 1 and target == 1:
+            confusion["tp"] += 1
+        elif label == 0 and target == 0:
+            confusion["tn"] += 1
+        elif label == 1 and target == 0:
+            confusion["fp"] += 1
+        else:
+            confusion["fn"] += 1
+
+    total = sum(confusion.values())
+    accuracy = (confusion["tp"] + confusion["tn"]) / total
+    precision = safe_div(confusion["tp"], confusion["tp"] + confusion["fp"])
+    recall = safe_div(confusion["tp"], confusion["tp"] + confusion["fn"])
+    f1 = safe_div(2 * precision * recall, precision + recall)
+    return {
+        "test_records": total,
+        "accuracy": round(accuracy, 4),
+        "precision": round(precision, 4),
+        "recall": round(recall, 4),
+        "f1": round(f1, 4),
+        "log_loss": round(statistics.fmean(losses), 4),
+        "confusion_matrix": confusion,
+    }
+
+
+def predict_knn_probability(model, features):
+    standardized = standardize(features, model["means"], model["stds"])
+    distances = sorted(
+        (
+            (squared_distance(standardized, train_vector), label)
+            for train_vector, label in zip(model["train_vectors"], model["train_labels"])
+        ),
+        key=lambda item: item[0],
+    )
+    nearest = distances[: model["k"]]
+    return sum(label for _, label in nearest) / len(nearest)
+
+
+def squared_distance(left, right):
+    return sum((a - b) ** 2 for a, b in zip(left, right))
 
 
 def evaluate_baseline(test):

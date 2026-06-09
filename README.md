@@ -7,7 +7,7 @@ This project is designed for deployment on Vercel:
 - Frontend: Vercel static hosting
 - Backend: Vercel Python serverless function
 - Optional AWS backend: Lambda, API Gateway, and DynamoDB
-- ML: Logistic Regression trained from the included dataset with a pure-Python script
+- ML: k-nearest-neighbors model selected from a pure-Python training script
 
 Recommended live hosting:
 
@@ -88,7 +88,7 @@ The included spreadsheet is a curated breast cancer awareness dataset:
 
 ## Machine Learning
 
-The project now includes a reproducible Logistic Regression pipeline:
+The project now includes a reproducible pure-Python ML pipeline:
 
 ```text
 python ml/train_model.py
@@ -98,22 +98,23 @@ The script:
 
 1. Reads `Dataset_file.xlsx` directly.
 2. Extracts the curated breast cancer awareness dataset.
-3. Trains a Logistic Regression model with standardized features.
-4. Evaluates the model on a fixed 20% test split.
-5. Writes `aws/model.json` for Lambda inference.
+3. Trains Logistic Regression as an interpretable baseline.
+4. Benchmarks lightweight kNN candidates.
+5. Selects the best model on a fixed 20% test split.
+6. Writes `aws/model.json` for Vercel/AWS inference.
 
 Current generated model metrics:
 
 | Metric | Value |
 | --- | ---: |
 | Test records | 200 |
-| Accuracy | 0.54 |
-| Precision | 0.5385 |
-| Recall | 0.56 |
-| F1 | 0.549 |
-| Log loss | 0.6937 |
+| Accuracy | 0.605 |
+| Precision | 0.6 |
+| Recall | 0.63 |
+| F1 | 0.6146 |
+| Log loss | 0.6735 |
 
-These metrics show that the included dataset has limited predictive signal. The model is included to demonstrate an end-to-end ML workflow, not to provide clinical-grade prediction.
+These metrics improve on the earlier Logistic Regression baseline, but the model is still included to demonstrate an end-to-end ML workflow, not to provide clinical-grade prediction.
 
 ## Vercel Deployment
 

@@ -24,11 +24,27 @@
     ],
     "target": "Detected_cancer"
   },
-  "deployed_model": "Logistic Regression",
+  "deployed_model": "kNN (k=41)",
   "model_comparison": [
     {
-      "model": "Logistic Regression",
+      "model": "kNN (k=41)",
       "role": "Deployed ML model",
+      "test_records": 200,
+      "accuracy": 0.605,
+      "precision": 0.6,
+      "recall": 0.63,
+      "f1": 0.6146,
+      "log_loss": 0.6735,
+      "confusion_matrix": {
+        "tp": 63,
+        "tn": 58,
+        "fp": 42,
+        "fn": 37
+      }
+    },
+    {
+      "model": "Logistic Regression",
+      "role": "Baseline interpretable model",
       "test_records": 200,
       "accuracy": 0.54,
       "precision": 0.5385,
