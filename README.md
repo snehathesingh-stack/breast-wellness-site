@@ -39,13 +39,18 @@ This application is for awareness and education only. It does not diagnose breas
 ```text
 .
 ├── breast-cancer-prediction.html   # Static frontend for S3 hosting
+├── index.html                      # S3 website root page
 ├── Dataset_file.xlsx               # Curated project dataset
+├── DEPLOYMENT.md                   # S3 403 fix and deployment guide
 ├── README.md                       # Project documentation
+├── .github/workflows/
+│   └── deploy-s3.yml               # Optional GitHub Actions S3 deployment
 ├── ml/
 │   └── train_model.py              # Reproducible Logistic Regression training
 └── aws/
     ├── lambda_function.py          # Lambda handler for API Gateway
     ├── model.json                  # Exported trained model artifact
+    ├── s3-bucket-policy-public-read.json
     └── README.md                   # AWS setup notes
 ```
 
@@ -104,16 +109,20 @@ These metrics show that the included dataset has limited predictive signal. The 
 Open the HTML file directly in a browser for local testing:
 
 ```text
-breast-cancer-prediction.html
+index.html
 ```
 
 For AWS S3:
 
 1. Create an S3 bucket.
 2. Enable static website hosting.
-3. Upload `breast-cancer-prediction.html`.
-4. Set the index document to `breast-cancer-prediction.html`.
-5. Configure public read access or use CloudFront with origin access control.
+3. Upload `index.html` and `breast-cancer-prediction.html`.
+4. Set the index document to `index.html`.
+5. Configure public read access using `aws/s3-bucket-policy-public-read.json` or use CloudFront with origin access control.
+
+If the S3 website shows `403 Forbidden` or `AllAccessDisabled`, follow `DEPLOYMENT.md`.
+
+Optional automatic deployment is available with `.github/workflows/deploy-s3.yml`. Add `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` as GitHub repository secrets, then each push to `main` can upload the frontend files to S3.
 
 ## AWS Backend Setup
 
