@@ -111,7 +111,7 @@ def load_model():
 
 def predict_with_model(values):
     model = load_model()
-    features = feature_vector(values, model)
+    features, display_features = feature_vector(values, model)
     standardized = [
         (value - model["means"][index]) / model["stds"][index]
         for index, value in enumerate(features)
@@ -136,6 +136,8 @@ def predict_with_model(values):
         "probability": round(probability, 4),
         "score": round(probability * 100, 2),
         "message": message,
+        "top_factors": top_factors(model, standardized, display_features),
+        "thresholds": thresholds,
     }
 
 
@@ -146,7 +148,7 @@ def feature_vector(values, model):
     glucose = impute(values["glucose_level"], model, "Glucose_level")
     blood_pressure = impute(values["blood_pressure"], model, "Blood_pressure")
     cholesterol = impute(values["cholesterol"], model, "Cholesterol")
-    return [
+    features = [
         values["lump_present"],
         values["pain_in_breast"],
         values["skin_dimpling"],
@@ -166,6 +168,23 @@ def feature_vector(values, model):
         1 if 25 <= bmi < 30 else 0,
         1 if bmi >= 30 else 0,
     ]
+    display_features = dict(zip(model["features"], features))
+    return features, display_features
+
+
+def top_factors(model, standardized, display_features):
+    factors = []
+    for index, feature in enumerate(model["features"]):
+        contribution = model["weights"][index] * standardized[index]
+        factors.append(
+            {
+                "feature": feature,
+                "value": round(display_features[feature], 4),
+                "contribution": round(contribution, 4),
+                "direction": "raises probability" if contribution > 0 else "lowers probability",
+            }
+        )
+    return sorted(factors, key=lambda item: abs(item["contribution"]), reverse=True)[:5]
 
 
 def impute(value, model, feature_name):
@@ -191,5 +210,6 @@ def model_summary():
         "type": model.get("model_type"),
         "version": model.get("version"),
         "metrics": model.get("metrics"),
+        "comparison": model.get("comparison"),
         "disclaimer": "Educational model only; not clinically validated.",
     }
