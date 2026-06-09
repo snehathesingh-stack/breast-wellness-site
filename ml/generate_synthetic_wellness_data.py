@@ -28,6 +28,47 @@ FEATURES = [
 ]
 TARGET = "Detected_cancer"
 HEADERS = FEATURES + [TARGET]
+PROFILES = {
+    "low": {
+        "age": (18, 58, 32),
+        "bmi": (24, 4),
+        "symptoms": {
+            "lump_present": 0.08,
+            "pain_in_breast": 0.1,
+            "skin_dimpling": 0.02,
+            "nipple_discharge": 0.03,
+            "family_history": 0.12,
+        },
+        "tumor_size": (5, 4),
+        "base_risk": -5.0,
+    },
+    "moderate": {
+        "age": (28, 72, 48),
+        "bmi": (27, 5),
+        "symptoms": {
+            "lump_present": 0.45,
+            "pain_in_breast": 0.38,
+            "skin_dimpling": 0.16,
+            "nipple_discharge": 0.18,
+            "family_history": 0.34,
+        },
+        "tumor_size": (16, 8),
+        "base_risk": -3.1,
+    },
+    "high": {
+        "age": (40, 85, 62),
+        "bmi": (30, 5),
+        "symptoms": {
+            "lump_present": 0.78,
+            "pain_in_breast": 0.55,
+            "skin_dimpling": 0.42,
+            "nipple_discharge": 0.38,
+            "family_history": 0.5,
+        },
+        "tumor_size": (30, 12),
+        "base_risk": -1.35,
+    },
+}
 
 
 def sigmoid(score):
@@ -38,26 +79,33 @@ def clamp(value, minimum, maximum):
     return max(minimum, min(maximum, value))
 
 
-def generate_row():
-    age = int(random.triangular(18, 85, 38))
-    bmi = clamp(random.gauss(26, 5), 16.0, 44.0)
-    lump_present = 1 if random.random() < 0.2 else 0
-    pain_in_breast = 1 if random.random() < 0.18 else 0
-    skin_dimpling = 1 if random.random() < 0.1 else 0
-    nipple_discharge = 1 if random.random() < 0.12 else 0
-    family_history = 1 if random.random() < 0.28 else 0
+def chance(probability):
+    return 1 if random.random() < probability else 0
 
-    base_tumor_size = 8.0 if lump_present == 0 else 20.0
-    tumor_size_mm = clamp(random.gauss(base_tumor_size, 11), 1.0, 80.0)
+
+def generate_row(profile_name):
+    profile = PROFILES[profile_name]
+    symptom_rates = profile["symptoms"]
+
+    age = int(random.triangular(*profile["age"]))
+    bmi = clamp(random.gauss(*profile["bmi"]), 16.0, 44.0)
+    lump_present = chance(symptom_rates["lump_present"])
+    pain_in_breast = chance(symptom_rates["pain_in_breast"])
+    skin_dimpling = chance(symptom_rates["skin_dimpling"])
+    nipple_discharge = chance(symptom_rates["nipple_discharge"])
+    family_history = chance(symptom_rates["family_history"])
+
+    tumor_mean, tumor_std = profile["tumor_size"]
+    tumor_size_mm = clamp(random.gauss(tumor_mean + 8 * lump_present, tumor_std), 1.0, 80.0)
 
     glucose_level = clamp(random.gauss(100 + 8 * (bmi > 30), 15), 70, 180)
     blood_pressure = clamp(random.gauss(118 + 4 * (bmi > 30), 12), 90, 185)
     cholesterol = clamp(random.gauss(185 + 8 * (age > 50), 28), 120, 320)
 
-    risk_score = -5.5
+    risk_score = profile["base_risk"]
     risk_score += 1.45 * lump_present
     risk_score += 1.25 * pain_in_breast
-    risk_score += 1.4 * skin_dimpling
+    risk_score += 1.65 * skin_dimpling
     risk_score += 1.1 * nipple_discharge
     risk_score += 0.95 * family_history
     risk_score += 0.03 * (age - 18)
@@ -70,6 +118,8 @@ def generate_row():
 
     probability = sigmoid(risk_score)
     detected_cancer = 1 if random.random() < probability else 0
+    if random.random() < 0.06:
+        detected_cancer = 1 - detected_cancer
 
     age_group_36_50 = 1 if 36 <= age <= 50 else 0
     age_group_51_65 = 1 if 51 <= age <= 65 else 0
@@ -112,8 +162,11 @@ def generate_synthetic_dataset(output_path=None, records=1500, seed=None):
     with output_path.open("w", newline="", encoding="utf-8") as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=HEADERS)
         writer.writeheader()
+        profile_names = list(PROFILES)
+        profile_weights = [0.36, 0.34, 0.3]
         for _ in range(records):
-            writer.writerow(generate_row())
+            profile_name = random.choices(profile_names, weights=profile_weights, k=1)[0]
+            writer.writerow(generate_row(profile_name))
 
     print(f"Generated synthetic wellness dataset: {output_path} ({records} records)")
     return output_path

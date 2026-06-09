@@ -106,9 +106,9 @@ def main(dataset_path=None):
         "model_comparison": artifact["comparison"],
         "feature_importance": feature_importance,
         "limitations": [
-            "The dataset is curated for project demonstration.",
+            "The dataset is synthetic and stratified for project demonstration.",
             "The model is not clinically validated.",
-            "Metrics show limited predictive signal and should be presented honestly.",
+            "Metrics should be presented as educational validation, not real-world clinical performance.",
         ],
     }
 

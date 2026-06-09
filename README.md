@@ -94,6 +94,8 @@ The included spreadsheet is a curated breast cancer awareness dataset:
   - `Cholesterol`
   - `Detected_cancer`
 
+The wellness model can also be regenerated from a balanced synthetic dataset that covers low, moderate, and high questionnaire patterns. This improves the educational ML demo, but it is still not clinical evidence.
+
 The diagnostic model uses the Wisconsin Diagnostic Breast Cancer dataset requested from Kaggle:
 
 - https://www.kaggle.com/datasets/uciml/breast-cancer-wisconsin-data
@@ -123,14 +125,14 @@ Current generated model metrics:
 
 | Metric | Value |
 | --- | ---: |
-| Test records | 200 |
-| Accuracy | 0.605 |
-| Precision | 0.6 |
-| Recall | 0.63 |
-| F1 | 0.6146 |
-| Log loss | 0.6735 |
+| Test records | 240 |
+| Accuracy | 0.9083 |
+| Precision | 0.96 |
+| Recall | 0.8759 |
+| F1 | 0.916 |
+| Log loss | 0.3336 |
 
-These metrics improve on the earlier Logistic Regression baseline, but the model is still included to demonstrate an end-to-end ML workflow, not to provide clinical-grade prediction.
+These metrics come from the balanced synthetic wellness dataset. They show the deployed demo model is learning the synthetic questionnaire patterns, but the model is still included to demonstrate an end-to-end ML workflow, not to provide clinical-grade prediction.
 
 ## Diagnostic Model
 
@@ -205,6 +207,14 @@ The frontend uses a relative API URL:
 ```
 
 so it works automatically after Vercel deployment.
+
+If someone else opens the site and Vercel asks for access, check that you are sharing the production URL, for example:
+
+```text
+https://breast-wellness-site.vercel.app
+```
+
+Preview links under a personal/team project URL can be protected by Vercel Deployment Protection. In Vercel, open **Project Settings > Deployment Protection** and turn off Vercel Authentication or Password Protection for Production if this is meant to be publicly visible.
 
 ## Testing and Validation
 

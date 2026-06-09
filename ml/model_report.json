@@ -1,7 +1,7 @@
 {
   "dataset": {
     "file": "synthetic_wellness_dataset.csv",
-    "records": 1500,
+    "records": 1200,
     "features": [
       "Lump_present",
       "Pain_in_breast",
@@ -24,170 +24,170 @@
     ],
     "target": "Detected_cancer"
   },
-  "deployed_model": "kNN (k=7)",
+  "deployed_model": "kNN (k=31)",
   "model_comparison": [
     {
-      "model": "kNN (k=7)",
+      "model": "kNN (k=31)",
       "role": "Deployed ML model",
-      "test_records": 300,
-      "accuracy": 0.9033,
-      "precision": 0.9,
-      "recall": 0.2432,
-      "f1": 0.383,
-      "log_loss": 0.7408,
+      "test_records": 240,
+      "accuracy": 0.9083,
+      "precision": 0.96,
+      "recall": 0.8759,
+      "f1": 0.916,
+      "log_loss": 0.3336,
       "confusion_matrix": {
-        "tp": 9,
-        "tn": 262,
-        "fp": 1,
-        "fn": 28
+        "tp": 120,
+        "tn": 98,
+        "fp": 5,
+        "fn": 17
       }
     },
     {
       "model": "Logistic Regression",
       "role": "Baseline interpretable model",
-      "test_records": 300,
-      "accuracy": 0.89,
-      "precision": 0.5769,
-      "recall": 0.4054,
-      "f1": 0.4762,
-      "log_loss": 0.2639,
+      "test_records": 240,
+      "accuracy": 0.8958,
+      "precision": 0.9118,
+      "recall": 0.9051,
+      "f1": 0.9084,
+      "log_loss": 0.3075,
       "confusion_matrix": {
-        "tp": 15,
-        "tn": 252,
-        "fp": 11,
-        "fn": 22
+        "tp": 124,
+        "tn": 91,
+        "fp": 12,
+        "fn": 13
       }
     },
     {
       "model": "Majority Class Baseline",
       "role": "Sanity-check baseline",
-      "test_records": 300,
-      "accuracy": 0.8767,
-      "precision": 0.0,
-      "recall": 0.0,
-      "f1": 0.0,
+      "test_records": 240,
+      "accuracy": 0.5708,
+      "precision": 0.5708,
+      "recall": 1.0,
+      "f1": 0.7268,
       "log_loss": null,
       "confusion_matrix": {
-        "tp": 0,
-        "tn": 263,
-        "fp": 0,
-        "fn": 37
+        "tp": 137,
+        "tn": 0,
+        "fp": 103,
+        "fn": 0
       }
     }
   ],
   "feature_importance": [
     {
-      "feature": "TumorAge_interaction",
-      "weight": 0.753575,
-      "absolute_weight": 0.753575,
+      "feature": "Tumor_size_mm",
+      "weight": 1.014084,
+      "absolute_weight": 1.014084,
       "direction": "raises model probability"
     },
     {
       "feature": "Pain_in_breast",
-      "weight": 0.612444,
-      "absolute_weight": 0.612444,
-      "direction": "raises model probability"
-    },
-    {
-      "feature": "Lump_present",
-      "weight": 0.548082,
-      "absolute_weight": 0.548082,
+      "weight": 0.471799,
+      "absolute_weight": 0.471799,
       "direction": "raises model probability"
     },
     {
       "feature": "Family_history",
-      "weight": 0.533628,
-      "absolute_weight": 0.533628,
+      "weight": 0.439733,
+      "absolute_weight": 0.439733,
       "direction": "raises model probability"
     },
     {
-      "feature": "Skin_dimpling",
-      "weight": 0.49345,
-      "absolute_weight": 0.49345,
+      "feature": "Lump_present",
+      "weight": 0.324419,
+      "absolute_weight": 0.324419,
       "direction": "raises model probability"
     },
     {
-      "feature": "Tumor_size_mm",
-      "weight": 0.348515,
-      "absolute_weight": 0.348515,
+      "feature": "TumorAge_interaction",
+      "weight": 0.318697,
+      "absolute_weight": 0.318697,
       "direction": "raises model probability"
     },
     {
       "feature": "Age",
-      "weight": 0.332145,
-      "absolute_weight": 0.332145,
-      "direction": "raises model probability"
-    },
-    {
-      "feature": "BMI",
-      "weight": 0.327535,
-      "absolute_weight": 0.327535,
-      "direction": "raises model probability"
-    },
-    {
-      "feature": "Nipple_discharge",
-      "weight": 0.309453,
-      "absolute_weight": 0.309453,
-      "direction": "raises model probability"
-    },
-    {
-      "feature": "Age_group_36-50",
-      "weight": 0.135849,
-      "absolute_weight": 0.135849,
-      "direction": "raises model probability"
-    },
-    {
-      "feature": "Age_group_66+",
-      "weight": 0.106627,
-      "absolute_weight": 0.106627,
+      "weight": 0.315714,
+      "absolute_weight": 0.315714,
       "direction": "raises model probability"
     },
     {
       "feature": "Age_group_51-65",
-      "weight": 0.078507,
-      "absolute_weight": 0.078507,
+      "weight": 0.310269,
+      "absolute_weight": 0.310269,
+      "direction": "raises model probability"
+    },
+    {
+      "feature": "Nipple_discharge",
+      "weight": 0.297357,
+      "absolute_weight": 0.297357,
+      "direction": "raises model probability"
+    },
+    {
+      "feature": "Skin_dimpling",
+      "weight": 0.186933,
+      "absolute_weight": 0.186933,
+      "direction": "raises model probability"
+    },
+    {
+      "feature": "Age_group_36-50",
+      "weight": 0.151066,
+      "absolute_weight": 0.151066,
       "direction": "raises model probability"
     },
     {
       "feature": "Blood_pressure",
-      "weight": -0.050937,
-      "absolute_weight": 0.050937,
-      "direction": "lowers model probability"
+      "weight": 0.148212,
+      "absolute_weight": 0.148212,
+      "direction": "raises model probability"
     },
     {
-      "feature": "Cholesterol",
-      "weight": 0.03364,
-      "absolute_weight": 0.03364,
+      "feature": "BMI",
+      "weight": 0.138702,
+      "absolute_weight": 0.138702,
       "direction": "raises model probability"
     },
     {
       "feature": "BMI_category_Overweight",
-      "weight": -0.015515,
-      "absolute_weight": 0.015515,
-      "direction": "lowers model probability"
-    },
-    {
-      "feature": "BMI_category_Normal",
-      "weight": 0.007935,
-      "absolute_weight": 0.007935,
-      "direction": "raises model probability"
-    },
-    {
-      "feature": "Glucose_level",
-      "weight": 0.003411,
-      "absolute_weight": 0.003411,
+      "weight": 0.102011,
+      "absolute_weight": 0.102011,
       "direction": "raises model probability"
     },
     {
       "feature": "BMI_category_Obese",
-      "weight": -0.000628,
-      "absolute_weight": 0.000628,
+      "weight": -0.042164,
+      "absolute_weight": 0.042164,
       "direction": "lowers model probability"
+    },
+    {
+      "feature": "Age_group_66+",
+      "weight": 0.025886,
+      "absolute_weight": 0.025886,
+      "direction": "raises model probability"
+    },
+    {
+      "feature": "Glucose_level",
+      "weight": -0.013778,
+      "absolute_weight": 0.013778,
+      "direction": "lowers model probability"
+    },
+    {
+      "feature": "Cholesterol",
+      "weight": -0.011251,
+      "absolute_weight": 0.011251,
+      "direction": "lowers model probability"
+    },
+    {
+      "feature": "BMI_category_Normal",
+      "weight": 0.00446,
+      "absolute_weight": 0.00446,
+      "direction": "raises model probability"
     }
   ],
   "limitations": [
-    "The dataset is curated for project demonstration.",
+    "The dataset is synthetic and stratified for project demonstration.",
     "The model is not clinically validated.",
-    "Metrics show limited predictive signal and should be presented honestly."
+    "Metrics should be presented as educational validation, not real-world clinical performance."
   ]
 }

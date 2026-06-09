@@ -30,6 +30,22 @@ ML API: /api/predict
 
 The app already uses `/api/predict`, so no environment variables are needed.
 
+### If Visitors Are Asked for Access
+
+Use the public production domain when sharing the project:
+
+```text
+https://breast-wellness-site.vercel.app
+```
+
+If a shared link asks another person to sign in, it is usually a protected preview deployment or project-level deployment protection. In Vercel, open:
+
+```text
+Project Settings > Deployment Protection
+```
+
+Then turn off Vercel Authentication or Password Protection for Production. Preview deployments can remain protected while the production domain stays public.
+
 ## Fixing 403 Forbidden on S3
 
 If the website shows:
