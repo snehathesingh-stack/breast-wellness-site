@@ -1,3 +1,6 @@
+import argparse
+import csv
+import importlib.util
 import json
 import math
 import random
@@ -9,6 +12,7 @@ from xml.etree import ElementTree
 
 ROOT = Path(__file__).resolve().parents[1]
 DATASET_PATH = ROOT / "Dataset_file.xlsx"
+DEFAULT_SYNTHETIC_PATH = ROOT / "ml" / "synthetic_wellness_dataset.csv"
 MODEL_PATH = ROOT / "aws" / "model.json"
 REPORT_PATH = ROOT / "ml" / "model_report.json"
 
@@ -35,8 +39,9 @@ FEATURES = [
 TARGET = "Detected_cancer"
 
 
-def main():
-    rows = read_xlsx(DATASET_PATH)
+def main(dataset_path=None):
+    path = Path(dataset_path or DATASET_PATH)
+    rows = load_dataset(path)
     dataset = clean_rows(rows)
     train, test = split_dataset(dataset, test_ratio=0.2, seed=42)
     logistic_model = train_logistic_regression(train)
@@ -48,7 +53,7 @@ def main():
     artifact = {
         "model_type": "k_nearest_neighbors",
         "version": "2.0.0",
-        "trained_from": DATASET_PATH.name,
+        "trained_from": path.name,
         "target": TARGET,
         "features": FEATURES,
         "means": knn_model["means"],
@@ -92,7 +97,7 @@ def main():
 
     report = {
         "dataset": {
-            "file": DATASET_PATH.name,
+            "file": path.name,
             "records": len(dataset),
             "features": FEATURES,
             "target": TARGET,
@@ -113,6 +118,20 @@ def main():
     print(f"Wrote {MODEL_PATH}")
     print(f"Wrote {REPORT_PATH}")
     print(json.dumps(knn_metrics, indent=2))
+
+
+def load_dataset(path):
+    if path.suffix.lower() == ".csv":
+        return read_csv(path)
+    if path.suffix.lower() == ".xlsx":
+        return read_xlsx(path)
+    raise ValueError(f"Unsupported dataset format: {path.suffix}")
+
+
+def read_csv(path):
+    with path.open(newline="", encoding="utf-8") as csvfile:
+        reader = csv.DictReader(csvfile)
+        return [row for row in reader]
 
 
 def read_xlsx(path):
@@ -416,5 +435,37 @@ def safe_div(numerator, denominator):
     return numerator / denominator if denominator else 0.0
 
 
+def parse_arguments():
+    parser = argparse.ArgumentParser(description="Train the breast wellness questionnaire ML model.")
+    parser.add_argument(
+        "--dataset",
+        type=str,
+        default=str(DATASET_PATH),
+        help="Path to the wellness dataset file (.xlsx or .csv).",
+    )
+    parser.add_argument(
+        "--generate-synthetic",
+        action="store_true",
+        help="Generate a synthetic wellness dataset before training.",
+    )
+    parser.add_argument(
+        "--records",
+        type=int,
+        default=1500,
+        help="Number of synthetic records to generate when using --generate-synthetic.",
+    )
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
-    main()
+    args = parse_arguments()
+    dataset_path = Path(args.dataset)
+    if args.generate_synthetic:
+        if args.dataset == str(DATASET_PATH):
+            dataset_path = DEFAULT_SYNTHETIC_PATH
+        generate_script = Path(__file__).resolve().parent / "generate_synthetic_wellness_data.py"
+        spec = importlib.util.spec_from_file_location("generate_synthetic_wellness_data", generate_script)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        module.generate_synthetic_dataset(dataset_path, records=args.records, seed=42)
+    main(dataset_path)

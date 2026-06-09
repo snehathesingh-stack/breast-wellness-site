@@ -68,7 +68,7 @@ def test_health_model_summary_loads():
     diagnostic_model = health.load_model("diagnostic_model.json")
 
     assert model["model_type"] == "k_nearest_neighbors"
-    assert model["metrics"]["test_records"] == 200
+    assert model["metrics"]["test_records"] >= 200
     assert model["metrics"]["accuracy"] >= 0.6
     assert diagnostic_model["model_type"] == "diagnostic_logistic_regression"
     assert diagnostic_model["metrics"]["accuracy"] >= 0.95

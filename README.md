@@ -107,6 +107,7 @@ The project now includes a reproducible pure-Python ML pipeline:
 
 ```text
 python ml/train_model.py
+python ml/train_model.py --generate-synthetic --records 1500
 ```
 
 The script:
@@ -245,6 +246,7 @@ Optional AWS automatic deployment is available with `.github/workflows/deploy-s3
 ## Optional AWS Backend Setup
 
 1. Run `python ml/train_model.py` to regenerate `aws/model.json` if needed.
+   - To regenerate using a fresh synthetic wellness dataset, run `python ml/train_model.py --generate-synthetic --records 1500`.
 2. Create a Lambda function using Python 3.12 or newer.
 3. Upload both `aws/lambda_function.py` and `aws/model.json`.
 4. Create a DynamoDB table with partition key `id` as a string.

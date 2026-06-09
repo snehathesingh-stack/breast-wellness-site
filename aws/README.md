@@ -53,4 +53,6 @@ If `TABLE_NAME` is not set, the Lambda still returns ML guidance but does not wr
 python ml/train_model.py
 ```
 
+Use `python ml/train_model.py --generate-synthetic --records 1500` to generate a synthetic wellness dataset and retrain from it.
+
 The Lambda loads this file at startup. If the model file is missing, the handler falls back to rule-based awareness guidance so the API does not fail completely.
