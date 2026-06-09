@@ -4,15 +4,14 @@ Breast Wellness is a static web application for breast health awareness. It help
 
 This project is designed for deployment on AWS:
 
-- Frontend: Amazon S3 static website hosting
-- Backend: AWS Lambda with Python
-- API: Amazon API Gateway HTTP API
-- Storage: Amazon DynamoDB
+- Frontend: Vercel static hosting
+- Backend: Vercel Python serverless function
+- Optional AWS backend: Lambda, API Gateway, and DynamoDB
 - ML: Logistic Regression trained from the included dataset with a pure-Python script
 
-Live website:
+Recommended live hosting:
 
-http://breast-cancer-prediction-site.s3-website.ap-south-1.amazonaws.com
+https://vercel.com/new/clone?repository-url=https://github.com/snehathesingh-stack/breast-wellness-site
 
 ## Important Medical Disclaimer
 
@@ -32,7 +31,7 @@ This application is for awareness and education only. It does not diagnose breas
 - AWS Lambda starter backend with optional DynamoDB persistence
 - Reproducible ML training script
 - Exported Lambda-ready model artifact
-- Cloud ML probability returned from API Gateway/Lambda
+- Cloud ML probability returned from Vercel serverless API
 
 ## Repository Structure
 
@@ -40,9 +39,12 @@ This application is for awareness and education only. It does not diagnose breas
 .
 ├── breast-cancer-prediction.html   # Static frontend for S3 hosting
 ├── index.html                      # S3 website root page
+├── vercel.json                     # Vercel static hosting config
 ├── Dataset_file.xlsx               # Curated project dataset
 ├── DEPLOYMENT.md                   # S3 403 fix and deployment guide
 ├── README.md                       # Project documentation
+├── api/
+│   └── predict.py                  # Vercel Python ML inference endpoint
 ├── .github/workflows/
 │   └── deploy-s3.yml               # Optional GitHub Actions S3 deployment
 ├── ml/
@@ -104,7 +106,41 @@ Current generated model metrics:
 
 These metrics show that the included dataset has limited predictive signal. The model is included to demonstrate an end-to-end ML workflow, not to provide clinical-grade prediction.
 
-## Frontend Setup
+## Vercel Deployment
+
+The easiest working deployment is Vercel:
+
+1. Open this import link:
+
+```text
+https://vercel.com/new/clone?repository-url=https://github.com/snehathesingh-stack/breast-wellness-site
+```
+
+2. Choose your GitHub account.
+3. Keep the default project settings.
+4. Click **Deploy**.
+
+Vercel will serve:
+
+```text
+/
+```
+
+from `index.html`, and it will serve ML predictions from:
+
+```text
+/api/predict
+```
+
+The frontend uses a relative API URL:
+
+```text
+/api/predict
+```
+
+so it works automatically after Vercel deployment.
+
+## Local Frontend Setup
 
 Open the HTML file directly in a browser for local testing:
 
@@ -112,7 +148,9 @@ Open the HTML file directly in a browser for local testing:
 index.html
 ```
 
-For AWS S3:
+## Optional AWS S3 Setup
+
+AWS is no longer required for the live frontend. If you still want S3:
 
 1. Create an S3 bucket.
 2. Enable static website hosting.
@@ -120,11 +158,11 @@ For AWS S3:
 4. Set the index document to `index.html`.
 5. Configure public read access using `aws/s3-bucket-policy-public-read.json` or use CloudFront with origin access control.
 
-If the S3 website shows `403 Forbidden` or `AllAccessDisabled`, follow `DEPLOYMENT.md`.
+If the S3 website shows `403 Forbidden` or `AllAccessDisabled`, follow `DEPLOYMENT.md`. If the AWS account is closed, use Vercel instead.
 
-Optional automatic deployment is available with `.github/workflows/deploy-s3.yml`. Add `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` as GitHub repository secrets, then each push to `main` can upload the frontend files to S3.
+Optional AWS automatic deployment is available with `.github/workflows/deploy-s3.yml`. Add `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` as GitHub repository secrets, then each push to `main` can upload the frontend files to S3.
 
-## AWS Backend Setup
+## Optional AWS Backend Setup
 
 1. Run `python ml/train_model.py` to regenerate `aws/model.json` if needed.
 2. Create a Lambda function using Python 3.12 or newer.

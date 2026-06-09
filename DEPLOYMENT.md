@@ -1,6 +1,34 @@
 # Deployment Guide
 
-This project is ready for S3 static website hosting, Lambda, API Gateway, and DynamoDB.
+This project is ready for Vercel hosting, and it also includes optional S3 static website hosting, Lambda, API Gateway, and DynamoDB notes.
+
+## Recommended: Deploy on Vercel
+
+Use Vercel because it can host both the static frontend and the Python ML API without needing the closed AWS account.
+
+Import from GitHub:
+
+```text
+https://vercel.com/new/clone?repository-url=https://github.com/snehathesingh-stack/breast-wellness-site
+```
+
+Vercel settings:
+
+```text
+Framework Preset: Other
+Build Command: leave empty
+Output Directory: leave empty
+Install Command: leave empty
+```
+
+After deployment:
+
+```text
+Frontend: /
+ML API: /api/predict
+```
+
+The app already uses `/api/predict`, so no environment variables are needed.
 
 ## Fixing 403 Forbidden on S3
 
