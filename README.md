@@ -24,10 +24,12 @@ This application is for awareness and education only. It does not diagnose breas
 - Clear low, moderate, and higher concern messaging
 - Optional anonymous AI cloud check
 - Visible Vercel ML success/failure status in the frontend
+- Explainable AI response with top contributing model factors
 - Local browser storage for private check-in history
 - CSV export
 - Monthly Google Calendar reminder
 - Clinic search shortcut
+- Model report page with metrics, confusion matrix, comparison, and limitations
 - AWS Lambda starter backend with optional DynamoDB persistence
 - Reproducible ML training script
 - Exported Lambda-ready model artifact
@@ -39,12 +41,14 @@ This application is for awareness and education only. It does not diagnose breas
 .
 ├── breast-cancer-prediction.html   # Static frontend for S3 hosting
 ├── index.html                      # S3 website root page
+├── model-report.html               # ML model report page
 ├── vercel.json                     # Vercel static hosting config
 ├── Dataset_file.xlsx               # Curated project dataset
 ├── DEPLOYMENT.md                   # S3 403 fix and deployment guide
 ├── README.md                       # Project documentation
 ├── api/
-│   └── predict.py                  # Vercel Python ML inference endpoint
+│   ├── predict.py                  # Vercel Python ML inference endpoint
+│   └── health.py                   # Vercel model health endpoint
 ├── .github/workflows/
 │   └── deploy-s3.yml               # Optional GitHub Actions S3 deployment
 ├── ml/
@@ -132,6 +136,18 @@ from `index.html`, and it will serve ML predictions from:
 /api/predict
 ```
 
+It also exposes model service health at:
+
+```text
+/api/health
+```
+
+The model report page is available at:
+
+```text
+/model-report.html
+```
+
 The frontend uses a relative API URL:
 
 ```text
@@ -191,9 +207,9 @@ POST /predict
 9. Enable CORS for your S3 website origin.
 10. Update `API_ENDPOINT` in `breast-cancer-prediction.html` if your API URL is different.
 
-## API Payload
+## Vercel API Payload
 
-The frontend sends this shape to Lambda:
+The frontend sends this shape to `/api/predict`:
 
 ```json
 {
@@ -214,37 +230,37 @@ The frontend sends this shape to Lambda:
 }
 ```
 
-The Lambda returns:
+The Vercel API returns:
 
 ```json
 {
   "id": "generated-record-id",
   "guidance": {
-    "source": "ml_model",
+    "source": "vercel_ml_model",
     "level": "moderate",
     "probability": 0.5271,
     "score": 52.71,
-    "message": "The ML model found a moderate pattern match. A routine clinical check may help."
+    "message": "The ML model found a moderate pattern match. A routine clinical check may help.",
+    "top_factors": []
   },
   "model": {
     "available": true,
     "type": "logistic_regression",
     "version": "1.0.0"
   },
-  "message": "Awareness guidance generated successfully."
+  "message": "Vercel ML inference completed successfully."
 }
 ```
 
 ## Current Limitations
 
-- The app includes a deployed lightweight ML model artifact for Lambda, but it is educational and not clinically validated.
+- The app includes a deployed lightweight ML model artifact for Vercel and Lambda, but it is educational and not clinically validated.
 - The dataset is curated for project demonstration and should not be treated as clinical evidence.
 - Health-related data should be handled carefully; avoid collecting names, phone numbers, exact addresses, or other personal identifiers.
 
 ## Recommended Next Improvements
 
 - Improve dataset quality and retrain with clinically meaningful, validated data.
-- Add model explainability output such as top contributing features.
-- Add Lambda unit tests and CI.
+- Add API and frontend tests.
 - Add API Gateway custom domain and HTTPS frontend through CloudFront.
 - Add privacy policy text if the app is used beyond a class/demo setting.

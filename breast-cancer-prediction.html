@@ -209,6 +209,39 @@
     color: var(--accent-dark);
   }
 
+  .factor-list {
+    display: grid;
+    gap: 6px;
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .factor-list li {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 7px 8px;
+    border: 1px solid rgba(161, 92, 102, 0.16);
+    border-radius: var(--radius);
+    background: #fff;
+    font-size: 13px;
+  }
+
+  .model-status {
+    margin-top: 12px;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel);
+  }
+
+  .link {
+    color: var(--accent-dark);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
   .resource {
     padding: 12px 0;
     border-top: 1px solid var(--line);
@@ -383,6 +416,15 @@
         <h3>Privacy</h3>
         <p class="small">This page avoids collecting names, email, phone numbers, or exact location. Do not enter personal identifiers in exported records.</p>
       </div>
+      <div class="resource">
+        <h3>ML Project Report</h3>
+        <p class="small">Review model metrics, feature importance, and limitations.</p>
+        <p class="small"><a class="link" href="model-report.html">Open model report</a></p>
+      </div>
+      <div class="model-status" id="modelStatus">
+        <strong>AI status</strong>
+        <p class="small">Checking model service...</p>
+      </div>
     </aside>
   </div>
 
@@ -461,11 +503,30 @@ function computeGuidance(values) {
   };
 }
 
-function renderResult(entry, awsMessage) {
+function readableFeatureName(name) {
+  return name.replaceAll("_", " ").replace("mm", "(mm)");
+}
+
+function renderFactors(factors) {
+  if (!factors || !factors.length) return "";
+  return `
+    <ul class="factor-list">
+      ${factors.map((factor) => `
+        <li>
+          <span>${readableFeatureName(factor.feature)}</span>
+          <span>${factor.direction}</span>
+        </li>
+      `).join("")}
+    </ul>
+  `;
+}
+
+function renderResult(entry, cloudMessage) {
   const aiResult = entry.cloud ? `
     <div class="ai-box">
       <strong>Cloud ML result:</strong> ${entry.cloud.level} pattern match
       <br><span class="small">Model probability: ${Math.round(entry.cloud.probability * 100)}%. ${entry.cloud.message}</span>
+      ${renderFactors(entry.cloud.top_factors)}
     </div>
   ` : "";
 
@@ -476,7 +537,7 @@ function renderResult(entry, awsMessage) {
     <div>${entry.result.message}</div>
     <div class="small" style="margin-top:8px">Guidance score: ${entry.result.score}</div>
     ${aiResult}
-    <div class="status">${awsMessage}</div>
+    <div class="status">${cloudMessage}</div>
   `;
 }
 
@@ -668,6 +729,28 @@ document.getElementById("clinicBtn").addEventListener("click", () => {
 });
 
 renderSavedEntries();
+
+async function loadModelStatus() {
+  const target = document.getElementById("modelStatus");
+  try {
+    const response = await fetch("/api/health");
+    const payload = await response.json();
+    const metrics = payload.model && payload.model.metrics;
+    if (!response.ok || !metrics) throw new Error("Missing metrics");
+    target.innerHTML = `
+      <strong>AI status</strong>
+      <p class="small">Model online: ${payload.model.type}, v${payload.model.version}</p>
+      <p class="small">F1: ${metrics.f1} | Accuracy: ${metrics.accuracy}</p>
+    `;
+  } catch (error) {
+    target.innerHTML = `
+      <strong>AI status</strong>
+      <p class="small">Model status unavailable. The local guidance still works.</p>
+    `;
+  }
+}
+
+loadModelStatus();
 </script>
 </body>
 </html>
