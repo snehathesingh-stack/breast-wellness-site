@@ -49,6 +49,19 @@
     color: var(--muted);
   }
 
+  .callout {
+    margin-top: 16px;
+    border: 1px solid rgba(124, 63, 75, 0.22);
+    border-radius: var(--radius);
+    background: #fff7f8;
+    padding: 16px;
+  }
+
+  .callout strong {
+    color: var(--accent);
+    font-size: 22px;
+  }
+
   .grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -99,6 +112,20 @@
     font-size: 24px;
   }
 
+  .bar {
+    height: 8px;
+    border-radius: 999px;
+    background: #ead9dd;
+    overflow: hidden;
+    margin-top: 10px;
+  }
+
+  .bar span {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+  }
+
   .link {
     color: var(--accent);
     font-weight: 800;
@@ -114,16 +141,21 @@
 <body>
 <div class="page">
   <header>
-    <h1>ML Model Report</h1>
-    <p class="lead">Transparent model documentation for the Breast Wellness educational AI project.</p>
+    <h1>Wellness Questionnaire Model Report</h1>
+    <p class="lead">Transparent documentation for the lightweight self-check model used by the awareness form.</p>
     <p><a class="link" href="index.html">Back to self check</a></p>
+    <div class="callout">
+      <strong>Diagnostic WDBC model accuracy: 99.12%</strong>
+      <p class="small">This page explains the simpler wellness questionnaire model. For the high-accuracy diagnostic model trained on Wisconsin Diagnostic Breast Cancer cell-nuclei features, open the diagnostic report.</p>
+      <p><a class="link" href="diagnostic-report.html">Open diagnostic model report</a></p>
+    </div>
   </header>
 
   <main class="grid">
     <section class="panel wide">
-      <h2>Model Snapshot</h2>
+      <h2>Wellness Model Snapshot</h2>
       <div class="metric-row" id="metrics"></div>
-      <p class="small">This model is educational and not clinically validated. The metrics are intentionally shown as-is.</p>
+      <p class="small">This model is intentionally lightweight because it uses broad self-check questionnaire fields. Its moderate accuracy reflects limited signal in those inputs.</p>
     </section>
 
     <section class="panel">
@@ -141,6 +173,12 @@
       <table>
         <tbody id="confusion"></tbody>
       </table>
+    </section>
+
+    <section class="panel wide">
+      <h2>Interpretation</h2>
+      <p class="small">The wellness model is best used as an awareness assistant. It can help organize self-check information and suggest next steps, but it should not be treated as a diagnostic classifier.</p>
+      <p class="small">For diagnostic-grade ML performance, the project includes a separate WDBC model that uses 30 biopsy image-derived numeric features.</p>
     </section>
 
     <section class="panel wide">
@@ -172,11 +210,18 @@ function renderReport(report) {
   const confusion = deployed.confusion_matrix;
 
   document.getElementById("metrics").innerHTML = [
-    ["Accuracy", deployed.accuracy],
-    ["Precision", deployed.precision],
-    ["Recall", deployed.recall],
-    ["F1", deployed.f1]
-  ].map(([label, value]) => `<div class="metric"><span>${label}</span><strong>${value}</strong></div>`).join("");
+    ["Accuracy", deployed.accuracy, "Overall correct predictions"],
+    ["Precision", deployed.precision, "Correctness of positive predictions"],
+    ["Recall", deployed.recall, "How many actual positives were found"],
+    ["F1", deployed.f1, "Balance of precision and recall"]
+  ].map(([label, value, help]) => `
+    <div class="metric">
+      <span>${label}</span>
+      <strong>${value}</strong>
+      <div class="bar"><span style="width:${Math.round(Number(value) * 100)}%"></span></div>
+      <p class="small">${help}</p>
+    </div>
+  `).join("");
 
   document.getElementById("comparison").innerHTML = report.model_comparison.map((row) => `
     <tr>
@@ -188,9 +233,9 @@ function renderReport(report) {
   `).join("");
 
   document.getElementById("confusion").innerHTML = `
-    <tr><th></th><th>Predicted Yes</th><th>Predicted No</th></tr>
-    <tr><th>Actual Yes</th><td>${confusion.tp}</td><td>${confusion.fn}</td></tr>
-    <tr><th>Actual No</th><td>${confusion.fp}</td><td>${confusion.tn}</td></tr>
+    <tr><th></th><th>Predicted Detected</th><th>Predicted Not Detected</th></tr>
+    <tr><th>Actual Detected</th><td>${confusion.tp}</td><td>${confusion.fn}</td></tr>
+    <tr><th>Actual Not Detected</th><td>${confusion.fp}</td><td>${confusion.tn}</td></tr>
   `;
 
   document.getElementById("features").innerHTML = report.feature_importance.slice(0, 10).map((row) => `
