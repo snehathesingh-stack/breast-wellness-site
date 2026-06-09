@@ -260,9 +260,9 @@
   <header>
     <div>
       <h1>Breast Wellness Self Check</h1>
-      <p class="lead">A supportive awareness tool for tracking symptoms, learning next steps, and optionally saving an anonymized check-in through AWS. It is not a diagnosis or a substitute for medical care.</p>
+      <p class="lead">A supportive AI awareness tool for tracking symptoms, learning next steps, and optionally running an anonymized machine-learning check through Vercel. It is not a diagnosis or a substitute for medical care.</p>
     </div>
-    <div class="badge">AWS-ready static app</div>
+    <div class="badge">Vercel AI app</div>
   </header>
 
   <div class="layout">
@@ -319,10 +319,10 @@
             </select>
           </div>
           <div>
-            <label for="consent">Cloud logging</label>
+            <label for="consent">AI cloud check</label>
             <select id="consent" name="consent">
               <option value="no">Keep on this device only</option>
-              <option value="yes">Allow anonymous AWS log</option>
+              <option value="yes">Run anonymous AI check</option>
             </select>
           </div>
           <div class="section-title">Optional ML model inputs</div>
@@ -361,7 +361,7 @@
         <button id="clinicBtn" type="button">Find clinics</button>
       </div>
 
-      <p class="small">Local saves stay in this browser. Cloud logging is sent only when you choose to allow anonymous AWS logging.</p>
+      <p class="small">Local saves stay in this browser. The AI endpoint is called only when you choose to run the anonymous AI check.</p>
       <div id="savedList" class="saved-list" aria-live="polite"></div>
     </main>
 
@@ -521,9 +521,9 @@ function toApiPayload(entry) {
   };
 }
 
-async function sendToAWS(entry) {
+async function sendToCloudAI(entry) {
   if (entry.inputs.consent !== "yes") {
-    return "Cloud logging skipped by user choice.";
+    return "AI cloud check skipped by user choice.";
   }
 
   try {
@@ -535,17 +535,17 @@ async function sendToAWS(entry) {
 
     const payload = await response.json().catch(() => ({}));
     if (!response.ok) {
-      return `AWS logging failed (${response.status}). Check API Gateway route, CORS, and Lambda permissions.`;
+      return `AI cloud check failed (${response.status}). Check the Vercel /api/predict deployment.`;
     }
 
     if (payload.guidance && payload.guidance.level) {
       entry.cloud = payload.guidance;
-      return `AWS check saved. Cloud guidance: ${payload.guidance.level}.`;
+      return `AI cloud check complete. Model guidance: ${payload.guidance.level}.`;
     }
 
-    return "AWS check saved successfully.";
+    return "AI cloud check completed successfully.";
   } catch (error) {
-    return "AWS logging failed. Confirm the API Gateway URL, deployed stage, and CORS settings.";
+    return "AI cloud check failed. Confirm the Vercel /api/predict route is deployed.";
   }
 }
 
@@ -561,9 +561,9 @@ form.addEventListener("submit", async (event) => {
   };
 
   window.latestResult = entry;
-  renderResult(entry, "Checking AWS status...");
-  const awsMessage = await sendToAWS(entry);
-  renderResult(entry, awsMessage);
+  renderResult(entry, "Checking cloud AI status...");
+  const cloudMessage = await sendToCloudAI(entry);
+  renderResult(entry, cloudMessage);
 });
 
 document.getElementById("saveLocalBtn").addEventListener("click", () => {

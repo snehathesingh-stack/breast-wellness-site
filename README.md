@@ -1,8 +1,8 @@
 # Breast Wellness: Cloud-Based Awareness and Risk Guidance Tool
 
-Breast Wellness is a static web application for breast health awareness. It helps users record basic self-check information, receive non-diagnostic guidance, save entries locally, export check-ins, and optionally send an anonymous record to an AWS Lambda backend through API Gateway.
+Breast Wellness is a static web application for breast health awareness. It helps users record basic self-check information, receive non-diagnostic guidance, save entries locally, export check-ins, and optionally run an anonymous ML inference request through a Vercel serverless API.
 
-This project is designed for deployment on AWS:
+This project is designed for deployment on Vercel:
 
 - Frontend: Vercel static hosting
 - Backend: Vercel Python serverless function
@@ -22,8 +22,8 @@ This application is for awareness and education only. It does not diagnose breas
 - Breast wellness self-check form
 - Age and symptom-based awareness guidance
 - Clear low, moderate, and higher concern messaging
-- Optional anonymous AWS logging
-- Visible AWS success/failure status in the frontend
+- Optional anonymous AI cloud check
+- Visible Vercel ML success/failure status in the frontend
 - Local browser storage for private check-in history
 - CSV export
 - Monthly Google Calendar reminder
