@@ -50,9 +50,14 @@ This application is for awareness and education only. It does not diagnose breas
 │   ├── predict.py                  # Vercel Python ML inference endpoint
 │   └── health.py                   # Vercel model health endpoint
 ├── .github/workflows/
+│   ├── validate.yml                # CI validation checks
 │   └── deploy-s3.yml               # Optional GitHub Actions S3 deployment
 ├── ml/
 │   └── train_model.py              # Reproducible Logistic Regression training
+├── tests/
+│   ├── run_tests.py                # Dependency-free test runner
+│   ├── test_api.py
+│   └── test_static_assets.py
 └── aws/
     ├── lambda_function.py          # Lambda handler for API Gateway
     ├── model.json                  # Exported trained model artifact
@@ -155,6 +160,21 @@ The frontend uses a relative API URL:
 ```
 
 so it works automatically after Vercel deployment.
+
+## Testing and Validation
+
+Run the dependency-free test suite:
+
+```text
+python tests/run_tests.py
+```
+
+The GitHub Actions workflow `.github/workflows/validate.yml` runs:
+
+- Python syntax checks
+- JSON artifact validation
+- Frontend JavaScript syntax checks
+- API and static asset tests
 
 ## Local Frontend Setup
 

@@ -1,0 +1,34 @@
+name: Validate project
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Python syntax check
+        run: |
+          python -B -c "import ast, pathlib; [ast.parse(path.read_text(encoding='utf-8')) for path in pathlib.Path('.').glob('api/*.py')]; ast.parse(pathlib.Path('ml/train_model.py').read_text(encoding='utf-8')); print('python syntax ok')"
+
+      - name: Validate JSON artifacts
+        run: |
+          python -B -c "import json, pathlib; [json.loads(path.read_text(encoding='utf-8')) for path in [pathlib.Path('aws/model.json'), pathlib.Path('ml/model_report.json'), pathlib.Path('vercel.json')]]; print('json ok')"
+
+      - name: Frontend script syntax check
+        run: |
+          node -e "const fs=require('fs'); for (const file of ['index.html','breast-cancer-prediction.html','model-report.html']) { const html=fs.readFileSync(file,'utf8'); const scripts=[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m=>m[1]).join('\n'); new Function(scripts); } console.log('frontend script syntax ok');"
+
+      - name: Run tests
+        run: python tests/run_tests.py
