@@ -3,271 +3,671 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Breast Wellness — Self Check & Resources</title>
+<title>Breast Wellness - Self Check & Resources</title>
 <style>
-  :root{
-    --bg: #fbf7f3;
-    --card: #fffaf8;
-    --accent: #b0895b;
-    --muted: #6b6b6b;
-    --success: #2f6f4e;
-    --warn: #8a6d00;
-    --danger: #8b2b2b;
-    --radius: 14px;
+  :root {
+    --bg: #f8f6f2;
+    --surface: #fffdfb;
+    --panel: #ffffff;
+    --ink: #202124;
+    --muted: #62646a;
+    --line: #e7ddd5;
+    --accent: #a15c66;
+    --accent-dark: #7c3f4b;
+    --success: #1f6f4a;
+    --warning: #806500;
+    --danger: #8b2f3b;
+    --radius: 8px;
   }
-  *{box-sizing:border-box}
-  body{
-    margin:0;
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
     font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
-    background: linear-gradient(180deg,var(--bg),#fff);
-    color:#222;
-    padding:24px;
-    display:flex;
-    justify-content:center;
+    background: var(--bg);
+    color: var(--ink);
   }
-  .wrap{width:100%;max-width:960px;margin:32px;}
-  header{display:flex;gap:16px;align-items:center;margin-bottom:18px;}
-  .logo{width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,#fff,#fff5ee);
-    display:flex;align-items:center;justify-content:center;
-    box-shadow:0 6px 18px rgba(16,24,32,0.06);border:1px solid rgba(176,146,111,0.15);}
-  h1{font-size:20px;margin:0;color:var(--accent);font-weight:700}
-  p.lead{margin:0;color:var(--muted);font-size:14px}
-  .grid{display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:start}
-  @media (max-width:880px){.grid{grid-template-columns:1fr}}
-  .card{background:var(--card);border-radius:var(--radius);padding:18px;
-    box-shadow:0 8px 30px rgba(13,18,20,0.04);border:1px solid rgba(176,146,111,0.08);}
-  label{display:block;font-weight:600;margin:12px 0 6px;color:#2f2f2f;font-size:14px}
-  input[type="number"], select{
-    width:100%;padding:10px 12px;border-radius:10px;border:1px solid #f0e7e0;
-    background:white;font-size:14px;outline:none;transition:box-shadow .18s,border-color .18s;}
-  input:focus,select:focus{box-shadow:0 6px 20px rgba(176,146,111,0.08);border-color:var(--accent)}
-  .row{display:flex;gap:10px}
-  .row > *{flex:1}
-  button.primary{
-    margin-top:16px;width:100%;padding:12px;border-radius:10px;border:none;
-    background:var(--accent);color:white;font-weight:700;cursor:pointer;font-size:15px;}
-  .result{margin-top:14px;padding:12px;border-radius:10px;font-weight:600;}
-  .low{background:#e9f8f0;color:var(--success);border:1px solid rgba(47,111,78,0.09)}
-  .mid{background:#fff8e6;color:var(--warn);border:1px solid rgba(138,109,0,0.08)}
-  .high{background:#fdecea;color:var(--danger);border:1px solid rgba(139,43,43,0.08)}
-  .tools h3{margin:0 0 10px 0;color:#333}
-  .tool{padding:12px;border-radius:10px;background:white;margin-bottom:12px;border:1px solid rgba(12,12,12,0.03);}
-  .small{font-size:13px;color:var(--muted);margin-top:6px}
-  .steps{display:flex;flex-direction:column;gap:8px;margin-top:6px}
-  .step{display:flex;gap:12px;align-items:flex-start;padding:10px;border-radius:10px;background:#fffaf7;border:1px solid rgba(176,146,111,0.04)}
-  .icon{width:56px;height:56px;flex:0 0 56px;border-radius:10px;background:linear-gradient(180deg,#fff,#fff7f4);display:flex;align-items:center;justify-content:center}
-  .step h4{margin:0;font-size:15px}
-  .step p{margin:6px 0 0 0;color:var(--muted);font-size:13px}
-  footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
-  .small-btn{display:inline-block;padding:8px 10px;border-radius:9px;background:#fff;border:1px solid rgba(12,12,12,0.04);cursor:pointer;font-weight:600;margin-right:8px}
-  .link{color:var(--accent);text-decoration:none;font-weight:600}
-  .saved-list{max-height:160px;overflow:auto;padding:8px;border-radius:8px;background:#fff;border:1px dashed rgba(0,0,0,0.03);margin-top:8px}
-  .entry{padding:8px;border-radius:8px;border-bottom:1px solid rgba(0,0,0,0.03);font-size:13px;color:var(--muted)}
+
+  .page {
+    width: min(1120px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 24px 0 32px;
+  }
+
+  header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 18px;
+    align-items: end;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 18px;
+    margin-bottom: 22px;
+  }
+
+  h1, h2, h3, p { margin-top: 0; }
+
+  h1 {
+    margin-bottom: 6px;
+    font-size: clamp(26px, 4vw, 42px);
+    line-height: 1.08;
+    color: var(--accent-dark);
+    letter-spacing: 0;
+  }
+
+  h2 { font-size: 22px; margin-bottom: 8px; }
+  h3 { font-size: 16px; margin-bottom: 8px; }
+
+  .lead {
+    max-width: 720px;
+    margin-bottom: 0;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 6px 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--accent-dark);
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 18px;
+    align-items: start;
+  }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .section-title {
+    grid-column: 1 / -1;
+    margin: 8px 0 0;
+    color: var(--accent-dark);
+    font-size: 15px;
+    font-weight: 800;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 6px;
+    color: #33353a;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  input[type="number"], select {
+    width: 100%;
+    min-height: 42px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel);
+    color: var(--ink);
+    padding: 9px 10px;
+    font-size: 15px;
+  }
+
+  input:focus, select:focus, button:focus-visible {
+    outline: 3px solid rgba(161, 92, 102, 0.18);
+    outline-offset: 2px;
+    border-color: var(--accent);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  button {
+    min-height: 40px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel);
+    color: var(--ink);
+    cursor: pointer;
+    font-weight: 700;
+    padding: 9px 12px;
+  }
+
+  button.primary {
+    width: 100%;
+    margin-top: 16px;
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+    font-size: 16px;
+  }
+
+  button.primary:hover { background: var(--accent-dark); }
+
+  .note, .small {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .result {
+    display: none;
+    margin-top: 16px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    padding: 14px;
+    background: var(--panel);
+  }
+
+  .result.low { border-color: rgba(31, 111, 74, 0.28); background: #f0fbf5; }
+  .result.moderate { border-color: rgba(128, 101, 0, 0.3); background: #fff9e8; }
+  .result.high { border-color: rgba(139, 47, 59, 0.26); background: #fff0f2; }
+
+  .result-title {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+
+  .low .result-title { color: var(--success); }
+  .moderate .result-title { color: var(--warning); }
+  .high .result-title { color: var(--danger); }
+
+  .status {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .ai-box {
+    margin-top: 12px;
+    padding: 12px;
+    border: 1px solid rgba(161, 92, 102, 0.24);
+    border-radius: var(--radius);
+    background: #fff7f8;
+  }
+
+  .ai-box strong {
+    color: var(--accent-dark);
+  }
+
+  .resource {
+    padding: 12px 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .resource:first-of-type { border-top: 0; padding-top: 0; }
+  .resource p { margin-bottom: 0; }
+
+  .saved-list {
+    display: none;
+    margin-top: 12px;
+    max-height: 220px;
+    overflow: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel);
+  }
+
+  .entry {
+    padding: 10px;
+    border-top: 1px solid var(--line);
+    font-size: 13px;
+  }
+
+  .entry:first-child { border-top: 0; }
+
+  footer {
+    margin-top: 18px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 880px) {
+    .layout, header { grid-template-columns: 1fr; }
+    header { align-items: start; }
+  }
+
+  @media (max-width: 620px) {
+    .page { width: min(100% - 20px, 1120px); padding-top: 14px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .panel { padding: 14px; }
+    button { width: 100%; }
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
-<header>
-  <div class="logo">
-    <svg width="38" height="38" viewBox="0 0 24 24" fill="none">
-      <path d="M12 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="#f8d5cf"/>
-      <path d="M10 12c-3 0-6 2-6 5 0 1.66 1.34 3 3 3 3 0 5-3 5-6" fill="#ffdeda"/>
-      <path d="M14 12c3 0 6 2 6 5 0 1.66-1.34 3-3 3-3 0-5-3-5-6" fill="#ffe9d9"/>
-    </svg>
+<div class="page">
+  <header>
+    <div>
+      <h1>Breast Wellness Self Check</h1>
+      <p class="lead">A supportive awareness tool for tracking symptoms, learning next steps, and optionally saving an anonymized check-in through AWS. It is not a diagnosis or a substitute for medical care.</p>
+    </div>
+    <div class="badge">AWS-ready static app</div>
+  </header>
+
+  <div class="layout">
+    <main class="panel">
+      <h2>Quick Check</h2>
+      <p class="note">Answer the questions below. If you notice a new lump, nipple discharge, skin changes, or persistent symptoms, speak with a qualified clinician.</p>
+
+      <form id="wellnessForm">
+        <div class="form-grid">
+          <div>
+            <label for="age">Age</label>
+            <input id="age" name="age" type="number" min="18" max="120" placeholder="e.g. 34" required>
+          </div>
+          <div>
+            <label for="lump">Lump or unusual firmness?</label>
+            <select id="lump" name="lump">
+              <option value="no">No</option>
+              <option value="yes">Yes</option>
+            </select>
+          </div>
+          <div>
+            <label for="pain">Pain or discomfort?</label>
+            <select id="pain" name="pain">
+              <option value="no">No</option>
+              <option value="yes">Yes</option>
+            </select>
+          </div>
+          <div>
+            <label for="skinChange">Skin dimpling or nipple changes?</label>
+            <select id="skinChange" name="skinChange">
+              <option value="no">No</option>
+              <option value="yes">Yes</option>
+            </select>
+          </div>
+          <div>
+            <label for="discharge">Nipple discharge?</label>
+            <select id="discharge" name="discharge">
+              <option value="no">No</option>
+              <option value="yes">Yes</option>
+            </select>
+          </div>
+          <div>
+            <label for="familyHistory">Family history?</label>
+            <select id="familyHistory" name="familyHistory">
+              <option value="no">No</option>
+              <option value="yes">Yes</option>
+            </select>
+          </div>
+          <div>
+            <label for="mammogram">Recent mammogram abnormality?</label>
+            <select id="mammogram" name="mammogram">
+              <option value="no">No / Not sure</option>
+              <option value="yes">Yes</option>
+            </select>
+          </div>
+          <div>
+            <label for="consent">Cloud logging</label>
+            <select id="consent" name="consent">
+              <option value="no">Keep on this device only</option>
+              <option value="yes">Allow anonymous AWS log</option>
+            </select>
+          </div>
+          <div class="section-title">Optional ML model inputs</div>
+          <div>
+            <label for="tumorSize">Tumor size in mm, if known</label>
+            <input id="tumorSize" name="tumorSize" type="number" min="0" max="250" step="0.1" placeholder="Optional">
+          </div>
+          <div>
+            <label for="bmi">BMI, if known</label>
+            <input id="bmi" name="bmi" type="number" min="10" max="70" step="0.1" placeholder="Optional">
+          </div>
+          <div>
+            <label for="glucose">Glucose level, if known</label>
+            <input id="glucose" name="glucose" type="number" min="40" max="400" step="1" placeholder="Optional">
+          </div>
+          <div>
+            <label for="bloodPressure">Blood pressure, if known</label>
+            <input id="bloodPressure" name="bloodPressure" type="number" min="60" max="260" step="1" placeholder="Optional">
+          </div>
+          <div>
+            <label for="cholesterol">Cholesterol, if known</label>
+            <input id="cholesterol" name="cholesterol" type="number" min="80" max="500" step="1" placeholder="Optional">
+          </div>
+        </div>
+
+        <button class="primary" id="checkBtn" type="submit">Check My Wellness</button>
+      </form>
+
+      <div id="result" class="result" aria-live="polite"></div>
+
+      <div class="actions">
+        <button id="saveLocalBtn" type="button">Save locally</button>
+        <button id="exportCSVBtn" type="button">Export CSV</button>
+        <button id="tipsBtn" type="button">Download tips</button>
+        <button id="calendarBtn" type="button">Monthly calendar reminder</button>
+        <button id="clinicBtn" type="button">Find clinics</button>
+      </div>
+
+      <p class="small">Local saves stay in this browser. Cloud logging is sent only when you choose to allow anonymous AWS logging.</p>
+      <div id="savedList" class="saved-list" aria-live="polite"></div>
+    </main>
+
+    <aside class="panel">
+      <h2>Resources</h2>
+      <div class="resource">
+        <h3>When to seek care</h3>
+        <p class="small">Book a clinical check for a new lump, nipple discharge, skin dimpling, swelling, or changes that persist beyond one menstrual cycle.</p>
+      </div>
+      <div class="resource">
+        <h3>Monthly self-check</h3>
+        <p class="small">Look for visible changes, then gently feel the breast and underarm area. Track what is normal for you, and report new or persistent changes.</p>
+      </div>
+      <div class="resource">
+        <h3>Screening</h3>
+        <p class="small">Screening needs vary by age, personal history, and family history. Follow local medical guidance or a clinician's recommendation.</p>
+      </div>
+      <div class="resource">
+        <h3>Privacy</h3>
+        <p class="small">This page avoids collecting names, email, phone numbers, or exact location. Do not enter personal identifiers in exported records.</p>
+      </div>
+    </aside>
   </div>
-  <div>
-    <h1>Breast Wellness — Self Check</h1>
-    <p class="lead">A friendly tool to help you stay aware. Not a diagnosis — just guidance for next steps.</p>
-  </div>
-</header>
 
-<div class="grid">
-  <main class="card">
-    <h2 style="margin-top:0;color:#2b2b2b">Quick Check</h2>
-    <p class="small">Answer a few simple questions — it only takes a minute.</p>
-
-    <label>Age</label>
-    <input id="age" type="number" min="18" placeholder="e.g. 34">
-
-    <div class="row" style="margin-top:8px">
-      <div>
-        <label>Lump or unusual firmness?</label>
-        <select id="lump"><option value="no">No</option><option value="yes">Yes</option></select>
-      </div>
-      <div>
-        <label>Pain or discomfort?</label>
-        <select id="pain"><option value="no">No</option><option value="yes">Yes</option></select>
-      </div>
-    </div>
-
-    <label>Skin or nipple changes?</label>
-    <select id="change"><option value="no">No</option><option value="yes">Yes</option></select>
-
-    <div class="row" style="margin-top:8px">
-      <div>
-        <label>Nipple discharge?</label>
-        <select id="discharge"><option value="no">No</option><option value="yes">Yes</option></select>
-      </div>
-      <div>
-        <label>Family history?</label>
-        <select id="family"><option value="no">No</option><option value="yes">Yes</option></select>
-      </div>
-    </div>
-
-    <label>Recent mammogram abnormalities?</label>
-    <select id="mammogram"><option value="no">No / Not sure</option><option value="yes">Yes</option></select>
-
-    <button class="primary" id="checkBtn">Check My Wellness</button>
-    <div id="result" class="result" style="display:none"></div>
-
-    <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
-      <button class="small-btn" id="saveLocalBtn">Save to this device</button>
-      <button class="small-btn" id="exportCSVBtn">Export all (CSV)</button>
-      <button class="small-btn" id="printTipsBtn">Download Tips (PDF)</button>
-      <button class="small-btn" id="calendarBtn">Set monthly reminder</button>
-      <button class="small-btn" id="notifyBtn">Enable browser reminder</button>
-      <button class="small-btn" id="clinicBtn">Find nearby clinics</button>
-    </div>
-    <div class="small" style="margin-top:10px">Your results stay private on this device unless exported.</div>
-    <div class="saved-list" id="savedList" style="display:none"></div>
-  </main>
-
-  <aside class="card tools">
-    <h3>Helpful Resources</h3>
-    <div class="tool"><strong>Friendly Tips</strong>
-      <p class="small">• Do monthly self-checks.<br>• Keep screening appointments.<br>• Talk to a clinician if unsure.</p>
-    </div>
-    <div class="tool">
-      <strong>What to Expect at Clinic</strong>
-      <p class="small">A gentle exam, possible imaging, and next steps.</p>
-    </div>
-  </aside>
-</div>
-
-<footer>Not a diagnosis — only a supportive screening tool. Consult a healthcare professional if concerned.</footer>
+  <footer>
+    This tool provides awareness guidance only. It does not diagnose cancer, estimate clinical probability, or replace professional medical advice.
+  </footer>
 </div>
 
 <script>
-function computeRisk(values){
-  let score = 0;
-  if(values.age && Number(values.age) >= 50) score += 2;
-  else if(values.age && Number(values.age) >= 40) score += 1;
-  ['lump','change','discharge','mammogram','family'].forEach(k=>{
-    if(values[k]==='yes') score += (k==='lump'||k==='mammogram'?3:1);
-  });
-  if(values.pain==='yes') score += 1;
-  let level,message;
-  if(score>=7){level='high';message='Some signs suggest that a clinical check would be wise. Consider booking a gentle evaluation soon.';}
-  else if(score>=3){level='mid';message='A few changes noted. A routine check or screening could provide reassurance.';}
-  else {level='low';message='No concerning signs detected. Continue monthly self-checks and routine screening.';}
-  return {level,message,score};
+const API_ENDPOINT = "https://ipc7etrav2.execute-api.ap-south-1.amazonaws.com/predict";
+const STORAGE_KEY = "breast_wellness_entries";
+
+const form = document.getElementById("wellnessForm");
+const resultDiv = document.getElementById("result");
+const savedList = document.getElementById("savedList");
+
+function yesNo(value) {
+  return value === "yes" ? 1 : 0;
 }
 
-const checkBtn=document.getElementById('checkBtn');
-const resultDiv=document.getElementById('result');
-
-checkBtn.addEventListener('click',e=>{
-  e.preventDefault();
-  const values={
-    age:document.getElementById('age').value,
-    lump:document.getElementById('lump').value,
-    pain:document.getElementById('pain').value,
-    change:document.getElementById('change').value,
-    discharge:document.getElementById('discharge').value,
-    family:document.getElementById('family').value,
-    mammogram:document.getElementById('mammogram').value
+function collectValues() {
+  return {
+    age: Number(document.getElementById("age").value),
+    lump: document.getElementById("lump").value,
+    pain: document.getElementById("pain").value,
+    skinChange: document.getElementById("skinChange").value,
+    discharge: document.getElementById("discharge").value,
+    familyHistory: document.getElementById("familyHistory").value,
+    mammogram: document.getElementById("mammogram").value,
+    consent: document.getElementById("consent").value,
+    tumorSize: optionalNumber("tumorSize"),
+    bmi: optionalNumber("bmi"),
+    glucose: optionalNumber("glucose"),
+    bloodPressure: optionalNumber("bloodPressure"),
+    cholesterol: optionalNumber("cholesterol")
   };
-  const res=computeRisk(values);
-  resultDiv.style.display='block';
-  resultDiv.className='result '+res.level;
-  resultDiv.innerHTML=`<div>Result: <strong>${res.level==='low'?'Low concern':res.level==='mid'?'Moderate concern':'Higher concern'}</strong></div>
-  <div style="margin-top:6px;font-size:14px;color:#555">${res.message}</div>
-  <div class="small" style="margin-top:8px">Score: ${res.score}</div>`;
+}
 
-  sendToAWS(values);
-  window.latestResult={ts:new Date().toISOString(),inputs:values,result:res};
+function optionalNumber(id) {
+  const value = document.getElementById(id).value;
+  return value === "" ? null : Number(value);
+}
 
+function computeGuidance(values) {
+  let score = 0;
+  if (values.age >= 50) score += 2;
+  else if (values.age >= 40) score += 1;
+  if (values.lump === "yes") score += 3;
+  if (values.mammogram === "yes") score += 3;
+  if (values.skinChange === "yes") score += 2;
+  if (values.discharge === "yes") score += 2;
+  if (values.familyHistory === "yes") score += 1;
+  if (values.pain === "yes") score += 1;
 
-});
-
-document.getElementById('saveLocalBtn').addEventListener('click',()=>{
-  if(!window.latestResult){alert('Please check first.');return;}
-  const items=JSON.parse(localStorage.getItem('wellness_entries')||'[]');
-  items.push(window.latestResult);
-  localStorage.setItem('wellness_entries',JSON.stringify(items));
-  alert('Saved on this device.');
-});
-
-document.getElementById('exportCSVBtn').addEventListener('click',()=>{
-  const items=JSON.parse(localStorage.getItem('wellness_entries')||'[]');
-  if(!items.length){alert('No saved entries.');return;}
-  const header=['timestamp','age','lump','pain','change','discharge','family','mammogram','level','score'];
-  const rows=items.map(it=>[it.ts,it.inputs.age,it.inputs.lump,it.inputs.pain,it.inputs.change,it.inputs.discharge,it.inputs.family,it.inputs.mammogram,it.result.level,it.result.score]);
-  const csv=[header.join(','),...rows.map(r=>r.map(v=>`"${v}"`).join(','))].join('\n');
-  const blob=new Blob([csv],{type:'text/csv'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='breast_wellness.csv';
-  a.click();
-});
-
-document.getElementById('calendarBtn').addEventListener('click',()=>{
-  const now=new Date();
-  const link=`https://calendar.google.com/calendar/render?action=TEMPLATE&text=Monthly+Breast+Self-Check&details=Gentle+self+exam+reminder.&dates=${now.toISOString().slice(0,10).replace(/-/g,'')}/${now.toISOString().slice(0,10).replace(/-/g,'')}`;
-  window.open(link,'_blank');
-});
-
-document.getElementById('notifyBtn').addEventListener('click',()=>{
-  if(Notification.permission==='granted'){
-    new Notification('💗 Breast Wellness Reminder',{body:'Time for your monthly self-check!'});
-  } else {
-    Notification.requestPermission().then(p=>{
-      if(p==='granted') new Notification('💗 Breast Wellness Reminder',{body:'You’ll get gentle monthly reminders.'});
-      else alert('Notification permission denied.');
-    });
+  if (score >= 7) {
+    return {
+      level: "high",
+      title: "Higher concern",
+      message: "Several warning signs were selected. Please arrange a clinical evaluation as soon as practical.",
+      score
+    };
   }
-});
+  if (score >= 3) {
+    return {
+      level: "moderate",
+      title: "Moderate concern",
+      message: "Some changes were selected. A routine check with a clinician can provide reassurance and next steps.",
+      score
+    };
+  }
+  return {
+    level: "low",
+    title: "Low immediate concern",
+    message: "No major warning pattern was selected. Continue monthly self-checks and routine screening.",
+    score
+  };
+}
 
-document.getElementById('clinicBtn').addEventListener('click',()=>{
-  window.open('https://www.google.com/maps/search/breast+clinic+near+me','_blank');
-});
+function renderResult(entry, awsMessage) {
+  const aiResult = entry.cloud ? `
+    <div class="ai-box">
+      <strong>Cloud ML result:</strong> ${entry.cloud.level} pattern match
+      <br><span class="small">Model probability: ${Math.round(entry.cloud.probability * 100)}%. ${entry.cloud.message}</span>
+    </div>
+  ` : "";
 
-document.getElementById('printTipsBtn').addEventListener('click',()=>{
-  const tips=`Monthly Self-Check Tips:
-1️⃣ Look in the mirror for changes.
-2️⃣ Raise arms and check both sides.
-3️⃣ Feel gently for any unusual firmness.
-4️⃣ Report persistent changes to your doctor.`;
-  const blob=new Blob([tips],{type:'text/plain'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='self_check_tips.txt';
-  a.click();
-});
+  resultDiv.style.display = "block";
+  resultDiv.className = `result ${entry.result.level}`;
+  resultDiv.innerHTML = `
+    <div class="result-title">${entry.result.title}</div>
+    <div>${entry.result.message}</div>
+    <div class="small" style="margin-top:8px">Guidance score: ${entry.result.score}</div>
+    ${aiResult}
+    <div class="status">${awsMessage}</div>
+  `;
+}
 
-// ✅ Connect form results to AWS API Gateway → Lambda → DynamoDB
-async function sendToAWS(values) {
+function renderSavedEntries() {
+  const entries = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  if (!entries.length) {
+    savedList.style.display = "none";
+    savedList.innerHTML = "";
+    return;
+  }
+
+  savedList.style.display = "block";
+  savedList.innerHTML = entries.slice().reverse().map((entry) => {
+    const date = new Date(entry.timestamp).toLocaleString();
+    return `<div class="entry"><strong>${entry.result.title}</strong><br>${date}<br>Score: ${entry.result.score}</div>`;
+  }).join("");
+}
+
+function saveLocal(entry) {
+  const entries = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  entries.push(entry);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+  renderSavedEntries();
+}
+
+function toApiPayload(entry) {
+  return {
+    age: entry.inputs.age,
+    lump_present: yesNo(entry.inputs.lump),
+    pain_in_breast: yesNo(entry.inputs.pain),
+    skin_dimpling: yesNo(entry.inputs.skinChange),
+    nipple_discharge: yesNo(entry.inputs.discharge),
+    family_history: yesNo(entry.inputs.familyHistory),
+    mammogram_abnormality: yesNo(entry.inputs.mammogram),
+    tumor_size_mm: entry.inputs.tumorSize,
+    bmi: entry.inputs.bmi,
+    glucose_level: entry.inputs.glucose,
+    blood_pressure: entry.inputs.bloodPressure,
+    cholesterol: entry.inputs.cholesterol,
+    local_guidance_level: entry.result.level,
+    local_guidance_score: entry.result.score
+  };
+}
+
+async function sendToAWS(entry) {
+  if (entry.inputs.consent !== "yes") {
+    return "Cloud logging skipped by user choice.";
+  }
+
   try {
-    const response = await fetch("https://ipc7etrav2.execute-api.ap-south-1.amazonaws.com", {
+    const response = await fetch(API_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        age: values.age,
-        familyHistory: values.family === "yes" ? 1 : 0,
-        lump: values.lump === "yes" ? 1 : 0,
-        mammogram: values.mammogram === "yes" ? 1 : 0,
-        personalHistory: values.pain === "yes" ? 1 : 0
-      })
+      body: JSON.stringify(toApiPayload(entry))
     });
 
-    const result = await response.json();
-    console.log("✅ Saved to DynamoDB:", result);
-  } catch (err) {
-    console.error("❌ AWS Error:", err);
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      return `AWS logging failed (${response.status}). Check API Gateway route, CORS, and Lambda permissions.`;
+    }
+
+    if (payload.guidance && payload.guidance.level) {
+      entry.cloud = payload.guidance;
+      return `AWS check saved. Cloud guidance: ${payload.guidance.level}.`;
+    }
+
+    return "AWS check saved successfully.";
+  } catch (error) {
+    return "AWS logging failed. Confirm the API Gateway URL, deployed stage, and CORS settings.";
   }
 }
 
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (!form.reportValidity()) return;
 
+  const inputs = collectValues();
+  const entry = {
+    timestamp: new Date().toISOString(),
+    inputs,
+    result: computeGuidance(inputs)
+  };
+
+  window.latestResult = entry;
+  renderResult(entry, "Checking AWS status...");
+  const awsMessage = await sendToAWS(entry);
+  renderResult(entry, awsMessage);
+});
+
+document.getElementById("saveLocalBtn").addEventListener("click", () => {
+  if (!window.latestResult) {
+    alert("Please run a wellness check first.");
+    return;
+  }
+  saveLocal(window.latestResult);
+  alert("Saved in this browser.");
+});
+
+document.getElementById("exportCSVBtn").addEventListener("click", () => {
+  const entries = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  if (!entries.length) {
+    alert("No saved entries to export.");
+    return;
+  }
+
+  const header = [
+    "timestamp",
+    "age",
+    "lump",
+    "pain",
+    "skin_change",
+    "discharge",
+    "family_history",
+    "mammogram",
+    "tumor_size_mm",
+    "bmi",
+    "glucose_level",
+    "blood_pressure",
+    "cholesterol",
+    "local_level",
+    "local_score",
+    "cloud_level",
+    "cloud_probability"
+  ];
+  const rows = entries.map((entry) => [
+    entry.timestamp,
+    entry.inputs.age,
+    entry.inputs.lump,
+    entry.inputs.pain,
+    entry.inputs.skinChange,
+    entry.inputs.discharge,
+    entry.inputs.familyHistory,
+    entry.inputs.mammogram,
+    entry.inputs.tumorSize ?? "",
+    entry.inputs.bmi ?? "",
+    entry.inputs.glucose ?? "",
+    entry.inputs.bloodPressure ?? "",
+    entry.inputs.cholesterol ?? "",
+    entry.result.level,
+    entry.result.score,
+    entry.cloud?.level ?? "",
+    entry.cloud?.probability ?? ""
+  ]);
+  const csv = [header, ...rows].map((row) => row.map((value) => `"${String(value).replaceAll('"', '""')}"`).join(",")).join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "breast_wellness_entries.csv";
+  link.click();
+  URL.revokeObjectURL(link.href);
+});
+
+document.getElementById("tipsBtn").addEventListener("click", () => {
+  const tips = [
+    "Breast Wellness Self-Check Tips",
+    "",
+    "1. Look for visible changes in size, shape, skin texture, or nipple position.",
+    "2. Raise your arms and check both sides.",
+    "3. Gently feel the breast and underarm area for new or unusual firmness.",
+    "4. Track what is normal for you.",
+    "5. Contact a clinician for persistent changes, discharge, skin dimpling, or a new lump.",
+    "",
+    "This guide is for awareness only and is not medical advice."
+  ].join("\n");
+
+  const blob = new Blob([tips], { type: "text/plain;charset=utf-8" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "breast_wellness_tips.txt";
+  link.click();
+  URL.revokeObjectURL(link.href);
+});
+
+document.getElementById("calendarBtn").addEventListener("click", () => {
+  const start = new Date();
+  start.setDate(start.getDate() + 1);
+  const yyyymmdd = start.toISOString().slice(0, 10).replaceAll("-", "");
+  const url = new URL("https://calendar.google.com/calendar/render");
+  url.searchParams.set("action", "TEMPLATE");
+  url.searchParams.set("text", "Monthly Breast Self-Check");
+  url.searchParams.set("details", "Gentle awareness reminder. Contact a clinician for new or persistent changes.");
+  url.searchParams.set("dates", `${yyyymmdd}/${yyyymmdd}`);
+  url.searchParams.set("recur", "RRULE:FREQ=MONTHLY;COUNT=12");
+  window.open(url.toString(), "_blank", "noopener,noreferrer");
+});
+
+document.getElementById("clinicBtn").addEventListener("click", () => {
+  window.open("https://www.google.com/maps/search/breast+clinic+near+me", "_blank", "noopener,noreferrer");
+});
+
+renderSavedEntries();
 </script>
 </body>
 </html>
