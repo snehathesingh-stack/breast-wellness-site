@@ -338,5 +338,6 @@ The Vercel API returns:
 
 - Improve dataset quality and retrain with clinically meaningful, validated data.
 - Add API and frontend tests.
+- Add a short public deployment verification checklist for Vercel production releases.
 - Add API Gateway custom domain and HTTPS frontend through CloudFront.
 - Add privacy policy text if the app is used beyond a class/demo setting.
